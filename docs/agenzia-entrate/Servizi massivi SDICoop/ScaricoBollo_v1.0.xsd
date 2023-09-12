@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/ServiziMassivi/input/ScaricoBollo/v1.0"  
+	targetNamespace="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/ServiziMassivi/input/ScaricoBollo/v1.0"  
+	version="1.0">
+	
+	<xs:element name="ScaricoBollo" type="ScaricoBolloType" />
+	
+	<xs:complexType name="ScaricoBolloType">
+		<xs:sequence>
+			<xs:element name="PartitaIva"		type="PivaType"/>
+			<xs:element name="Anno"				type="AnnoType"/>
+			<xs:element name="Trimestre"		type="TrimestreType"/>
+		</xs:sequence>
+		<xs:attribute name="versione" type="VersioneType" use="required"/>
+	</xs:complexType>
+	
+	<!-- SIMPLE TYPES -->
+	<xs:simpleType name="PivaType">
+		<xs:restriction base="xs:string">
+			<xs:length value="11"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="AnnoType">
+		<xs:restriction base="xs:int">
+			<xs:minInclusive value="2020"/>
+			<xs:maxInclusive value="9999"/>
+		</xs:restriction>
+	</xs:simpleType> 
+	
+	<xs:simpleType name="TrimestreType">
+		<xs:restriction base="xs:int">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="4"/>
+		</xs:restriction>
+    </xs:simpleType>
+	
+	<xs:simpleType name="VersioneType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="5"/>
+		</xs:restriction>
+	</xs:simpleType>
+  
+</xs:schema>

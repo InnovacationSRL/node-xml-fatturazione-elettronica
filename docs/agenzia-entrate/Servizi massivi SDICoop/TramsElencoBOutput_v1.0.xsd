@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sogei.it/outputBolloMassivo" targetNamespace="http://www.sogei.it/outputBolloMassivo" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="outputBolloMassivo">
+		<xs:complexType>
+			<xs:sequence>
+				<!-- Codice fiscale soggetto bollo -->
+				<xs:element name="codiceFiscale" type="codFiscType"/>
+				<!-- Paertita iva bollo -->
+				<xs:element name="partitaIva" type="pivaType"/>
+				<!-- Anno bollo -->
+				<xs:element name="anno" type="annoType"/>
+				<!-- Trimestre bollo -->
+				<xs:element name="trimestre" type="trimestreType"/>
+				<!-- Elaborazione -->
+				<xs:element name="elaborazione">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="infoBollo" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="idsdi" type="xs:long"/>
+										<xs:element name="tipoInvio" type="tipoInvioType"/>
+										<xs:element name="numeroFattura" type="xs:string"/>
+										<xs:element name="data" type="xs:date"/>
+										<xs:element name="bollo" type="bolloType"/>
+										<xs:element name="esito" type="esitoType"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!-- trimestreType -->
+	<xs:simpleType name="trimestreType">
+		<xs:restriction base="xs:int">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- annoType -->
+	<xs:simpleType name="annoType">
+		<xs:restriction base="xs:int">
+			<xs:minInclusive value="2020"/>
+			<xs:maxInclusive value="2030"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- pivaType -->
+	<xs:simpleType name="pivaType">
+		<xs:restriction base="xs:string">
+			<xs:length value="11"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- codFiscType -->
+	<xs:simpleType name="codFiscType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="11"/>
+			<xs:maxLength value="16"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- bolloType -->
+	<xs:simpleType name="bolloType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SI"/>
+			<xs:enumeration value="NO"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- tipoInvioType -->
+	<xs:simpleType name="tipoInvioType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FPR"/>
+			<xs:enumeration value="FSM"/>
+			<xs:enumeration value="FPA"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- esitoType -->
+	<xs:simpleType name="esitoType">
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
