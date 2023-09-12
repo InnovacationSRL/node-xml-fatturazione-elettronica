@@ -3,7 +3,11 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "bun-types": "latest"
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "bun-plugin-dts": "^0.2.0",
+    "bun-types": "latest",
+    "eslint": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
