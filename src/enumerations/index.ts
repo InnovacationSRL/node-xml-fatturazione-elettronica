@@ -1,0 +1,7 @@
+export * from './regimeFiscale'
+export * from './modalitaPagamento'
+export * from './natura'
+export * from './tipoCassa'
+export * from './tipoDocumento'
+export * from './tipoPagamento'
+export * from './tipoRitenuta'

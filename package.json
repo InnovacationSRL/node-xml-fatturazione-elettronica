@@ -3,16 +3,22 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
+    "@types/cli-color": "^2.0.3",
+    "@types/lodash": "^4.14.198",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "bun-plugin-dts": "^0.2.0",
     "bun-types": "latest",
-    "eslint": "latest"
+    "cli-color": "^2.0.3",
+    "eslint": "latest",
+    "lodash": "^4.17.21",
+    "node-xlsx": "^0.23.0",
+    "prettier": "^3.0.3",
+    "xml-js": "^1.6.11"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
+    "typescript": "^5.0.0",
     "zod": "^3.22.2"
-  }
+  },
+  "dependencies": {}
 }

@@ -1,0 +1,1354 @@
+{
+  "_declaration": { "_attributes": { "version": "1.0", "encoding": "utf-8" } },
+  "xs:schema": {
+    "_attributes": {
+      "xmlns:xs": "http://www.w3.org/2001/XMLSchema",
+      "xmlns:ds": "http://www.w3.org/2000/09/xmldsig#",
+      "xmlns": "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2",
+      "targetNamespace": "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2",
+      "version": "1.2.2"
+    },
+    "xs:import": {
+      "_attributes": {
+        "namespace": "http://www.w3.org/2000/09/xmldsig#",
+        "schemaLocation": "http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"
+      }
+    },
+    "xs:element": {
+      "_attributes": { "name": "FatturaElettronica", "type": "FatturaElettronicaType" },
+      "xs:annotation": { "xs:documentation": { "_text": "XML schema fatture destinate a PA e privati in forma ordinaria 1.2.2" } }
+    },
+    "xs:complexType": [
+      {
+        "_attributes": { "name": "FatturaElettronicaType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "FatturaElettronicaHeader", "type": "FatturaElettronicaHeaderType" } },
+            { "_attributes": { "name": "FatturaElettronicaBody", "type": "FatturaElettronicaBodyType", "maxOccurs": "unbounded" } },
+            { "_attributes": { "ref": "ds:Signature", "minOccurs": "0" } }
+          ]
+        },
+        "xs:attribute": [
+          { "_attributes": { "name": "versione", "type": "FormatoTrasmissioneType", "use": "required" } },
+          { "_attributes": { "name": "SistemaEmittente", "type": "String10Type", "use": "optional" } }
+        ]
+      },
+      {
+        "_attributes": { "name": "FatturaElettronicaHeaderType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "DatiTrasmissione", "type": "DatiTrasmissioneType" } },
+            { "_attributes": { "name": "CedentePrestatore", "type": "CedentePrestatoreType" } },
+            { "_attributes": { "name": "RappresentanteFiscale", "type": "RappresentanteFiscaleType", "minOccurs": "0" } },
+            { "_attributes": { "name": "CessionarioCommittente", "type": "CessionarioCommittenteType" } },
+            {
+              "_attributes": { "name": "TerzoIntermediarioOSoggettoEmittente", "type": "TerzoIntermediarioSoggettoEmittenteType", "minOccurs": "0" }
+            },
+            { "_attributes": { "name": "SoggettoEmittente", "type": "SoggettoEmittenteType", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "FatturaElettronicaBodyType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "DatiGenerali", "type": "DatiGeneraliType" } },
+            { "_attributes": { "name": "DatiBeniServizi", "type": "DatiBeniServiziType" } },
+            { "_attributes": { "name": "DatiVeicoli", "type": "DatiVeicoliType", "minOccurs": "0" } },
+            { "_attributes": { "name": "DatiPagamento", "type": "DatiPagamentoType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "Allegati", "type": "AllegatiType", "minOccurs": "0", "maxOccurs": "unbounded" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiTrasmissioneType" },
+        "xs:annotation": { "xs:documentation": { "_text": "Blocco relativo ai dati di trasmissione della Fattura Elettronica" } },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "IdTrasmittente", "type": "IdFiscaleType" } },
+            { "_attributes": { "name": "ProgressivoInvio", "type": "String10Type" } },
+            { "_attributes": { "name": "FormatoTrasmissione", "type": "FormatoTrasmissioneType" } },
+            { "_attributes": { "name": "CodiceDestinatario", "type": "CodiceDestinatarioType" } },
+            { "_attributes": { "name": "ContattiTrasmittente", "type": "ContattiTrasmittenteType", "minOccurs": "0" } },
+            { "_attributes": { "name": "PECDestinatario", "type": "EmailType", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "IdFiscaleType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "IdPaese", "type": "NazioneType" } },
+            { "_attributes": { "name": "IdCodice", "type": "CodiceType" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "ContattiTrasmittenteType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "Telefono", "type": "TelFaxType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Email", "type": "EmailContattiType", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiGeneraliType" },
+        "xs:annotation": { "xs:documentation": { "_text": "\r\n\t\t\t\tBlocco relativo ai Dati Generali della Fattura Elettronica\r\n\t\t\t" } },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "DatiGeneraliDocumento", "type": "DatiGeneraliDocumentoType" } },
+            { "_attributes": { "name": "DatiOrdineAcquisto", "type": "DatiDocumentiCorrelatiType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "DatiContratto", "type": "DatiDocumentiCorrelatiType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "DatiConvenzione", "type": "DatiDocumentiCorrelatiType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "DatiRicezione", "type": "DatiDocumentiCorrelatiType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "DatiFattureCollegate", "type": "DatiDocumentiCorrelatiType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "DatiSAL", "type": "DatiSALType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "DatiDDT", "type": "DatiDDTType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "DatiTrasporto", "type": "DatiTrasportoType", "minOccurs": "0" } },
+            { "_attributes": { "name": "FatturaPrincipale", "type": "FatturaPrincipaleType", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiGeneraliDocumentoType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "TipoDocumento", "type": "TipoDocumentoType" } },
+            { "_attributes": { "name": "Divisa", "type": "DivisaType" } },
+            { "_attributes": { "name": "Data", "type": "DataFatturaType" } },
+            { "_attributes": { "name": "Numero", "type": "String20Type" } },
+            { "_attributes": { "name": "DatiRitenuta", "type": "DatiRitenutaType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "DatiBollo", "type": "DatiBolloType", "minOccurs": "0" } },
+            { "_attributes": { "name": "DatiCassaPrevidenziale", "type": "DatiCassaPrevidenzialeType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "ScontoMaggiorazione", "type": "ScontoMaggiorazioneType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "ImportoTotaleDocumento", "type": "Amount2DecimalType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Arrotondamento", "type": "Amount2DecimalType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Causale", "type": "String200LatinType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "Art73", "type": "Art73Type", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiRitenutaType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "TipoRitenuta", "type": "TipoRitenutaType" } },
+            { "_attributes": { "name": "ImportoRitenuta", "type": "Amount2DecimalType" } },
+            { "_attributes": { "name": "AliquotaRitenuta", "type": "RateType" } },
+            { "_attributes": { "name": "CausalePagamento", "type": "CausalePagamentoType" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiBolloType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "BolloVirtuale", "type": "BolloVirtualeType" } },
+            { "_attributes": { "name": "ImportoBollo", "type": "Amount2DecimalType", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiCassaPrevidenzialeType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "TipoCassa", "type": "TipoCassaType" } },
+            { "_attributes": { "name": "AlCassa", "type": "RateType" } },
+            { "_attributes": { "name": "ImportoContributoCassa", "type": "Amount2DecimalType" } },
+            { "_attributes": { "name": "ImponibileCassa", "type": "Amount2DecimalType", "minOccurs": "0" } },
+            { "_attributes": { "name": "AliquotaIVA", "type": "RateType" } },
+            { "_attributes": { "name": "Ritenuta", "type": "RitenutaType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Natura", "type": "NaturaType", "minOccurs": "0" } },
+            { "_attributes": { "name": "RiferimentoAmministrazione", "type": "String20Type", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "ScontoMaggiorazioneType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "Tipo", "type": "TipoScontoMaggiorazioneType" } },
+            { "_attributes": { "name": "Percentuale", "type": "RateType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Importo", "type": "Amount8DecimalType", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiSALType" },
+        "xs:sequence": { "xs:element": { "_attributes": { "name": "RiferimentoFase", "type": "RiferimentoFaseType" } } }
+      },
+      {
+        "_attributes": { "name": "DatiDocumentiCorrelatiType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "RiferimentoNumeroLinea", "type": "RiferimentoNumeroLineaType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "IdDocumento", "type": "String20Type" } },
+            { "_attributes": { "name": "Data", "type": "xs:date", "minOccurs": "0" } },
+            { "_attributes": { "name": "NumItem", "type": "String20Type", "minOccurs": "0" } },
+            { "_attributes": { "name": "CodiceCommessaConvenzione", "type": "String100LatinType", "minOccurs": "0" } },
+            { "_attributes": { "name": "CodiceCUP", "type": "String15Type", "minOccurs": "0" } },
+            { "_attributes": { "name": "CodiceCIG", "type": "String15Type", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiDDTType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "NumeroDDT", "type": "String20Type" } },
+            { "_attributes": { "name": "DataDDT", "type": "xs:date" } },
+            { "_attributes": { "name": "RiferimentoNumeroLinea", "type": "RiferimentoNumeroLineaType", "minOccurs": "0", "maxOccurs": "unbounded" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiTrasportoType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "DatiAnagraficiVettore", "type": "DatiAnagraficiVettoreType", "minOccurs": "0" } },
+            { "_attributes": { "name": "MezzoTrasporto", "type": "String80LatinType", "minOccurs": "0" } },
+            { "_attributes": { "name": "CausaleTrasporto", "type": "String100LatinType", "minOccurs": "0" } },
+            { "_attributes": { "name": "NumeroColli", "type": "NumeroColliType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Descrizione", "type": "String100LatinType", "minOccurs": "0" } },
+            { "_attributes": { "name": "UnitaMisuraPeso", "type": "String10Type", "minOccurs": "0" } },
+            { "_attributes": { "name": "PesoLordo", "type": "PesoType", "minOccurs": "0" } },
+            { "_attributes": { "name": "PesoNetto", "type": "PesoType", "minOccurs": "0" } },
+            { "_attributes": { "name": "DataOraRitiro", "type": "xs:dateTime", "minOccurs": "0" } },
+            { "_attributes": { "name": "DataInizioTrasporto", "type": "xs:date", "minOccurs": "0" } },
+            { "_attributes": { "name": "TipoResa", "type": "TipoResaType", "minOccurs": "0" } },
+            { "_attributes": { "name": "IndirizzoResa", "type": "IndirizzoType", "minOccurs": "0" } },
+            { "_attributes": { "name": "DataOraConsegna", "type": "xs:dateTime", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "IndirizzoType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "Indirizzo", "type": "String60LatinType" } },
+            { "_attributes": { "name": "NumeroCivico", "type": "NumeroCivicoType", "minOccurs": "0" } },
+            { "_attributes": { "name": "CAP", "type": "CAPType" } },
+            { "_attributes": { "name": "Comune", "type": "String60LatinType" } },
+            { "_attributes": { "name": "Provincia", "type": "ProvinciaType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Nazione", "type": "NazioneType", "default": "IT" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "FatturaPrincipaleType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "NumeroFatturaPrincipale", "type": "String20Type" } },
+            { "_attributes": { "name": "DataFatturaPrincipale", "type": "xs:date" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "CedentePrestatoreType" },
+        "xs:annotation": { "xs:documentation": { "_text": "Blocco relativo ai dati del Cedente / Prestatore" } },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "DatiAnagrafici", "type": "DatiAnagraficiCedenteType" } },
+            { "_attributes": { "name": "Sede", "type": "IndirizzoType" } },
+            { "_attributes": { "name": "StabileOrganizzazione", "type": "IndirizzoType", "minOccurs": "0" } },
+            { "_attributes": { "name": "IscrizioneREA", "type": "IscrizioneREAType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Contatti", "type": "ContattiType", "minOccurs": "0" } },
+            { "_attributes": { "name": "RiferimentoAmministrazione", "type": "String20Type", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiAnagraficiCedenteType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "IdFiscaleIVA", "type": "IdFiscaleType" } },
+            { "_attributes": { "name": "CodiceFiscale", "type": "CodiceFiscaleType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Anagrafica", "type": "AnagraficaType" } },
+            { "_attributes": { "name": "AlboProfessionale", "type": "String60LatinType", "minOccurs": "0" } },
+            { "_attributes": { "name": "ProvinciaAlbo", "type": "ProvinciaType", "minOccurs": "0" } },
+            { "_attributes": { "name": "NumeroIscrizioneAlbo", "type": "String60Type", "minOccurs": "0" } },
+            { "_attributes": { "name": "DataIscrizioneAlbo", "type": "xs:date", "minOccurs": "0" } },
+            { "_attributes": { "name": "RegimeFiscale", "type": "RegimeFiscaleType" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "AnagraficaType" },
+        "xs:annotation": { "xs:documentation": { "_text": "Il campo Denominazione è in alternativa ai campi Nome e Cognome" } },
+        "xs:sequence": {
+          "xs:choice": {
+            "xs:sequence": [
+              { "xs:element": { "_attributes": { "name": "Denominazione", "type": "String80LatinType" } } },
+              {
+                "xs:element": [
+                  { "_attributes": { "name": "Nome", "type": "String60LatinType" } },
+                  { "_attributes": { "name": "Cognome", "type": "String60LatinType" } }
+                ]
+              }
+            ]
+          },
+          "xs:element": [
+            { "_attributes": { "name": "Titolo", "type": "TitoloType", "minOccurs": "0" } },
+            { "_attributes": { "name": "CodEORI", "type": "CodEORIType", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiAnagraficiVettoreType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "IdFiscaleIVA", "type": "IdFiscaleType" } },
+            { "_attributes": { "name": "CodiceFiscale", "type": "CodiceFiscaleType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Anagrafica", "type": "AnagraficaType" } },
+            { "_attributes": { "name": "NumeroLicenzaGuida", "type": "String20Type", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "IscrizioneREAType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "Ufficio", "type": "ProvinciaType" } },
+            { "_attributes": { "name": "NumeroREA", "type": "String20Type" } },
+            { "_attributes": { "name": "CapitaleSociale", "type": "Amount2DecimalType", "minOccurs": "0" } },
+            { "_attributes": { "name": "SocioUnico", "type": "SocioUnicoType", "minOccurs": "0" } },
+            { "_attributes": { "name": "StatoLiquidazione", "type": "StatoLiquidazioneType" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "ContattiType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "Telefono", "type": "TelFaxType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Fax", "type": "TelFaxType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Email", "type": "EmailContattiType", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "RappresentanteFiscaleType" },
+        "xs:annotation": { "xs:documentation": { "_text": "Blocco relativo ai dati del Rappresentante Fiscale" } },
+        "xs:sequence": { "xs:element": { "_attributes": { "name": "DatiAnagrafici", "type": "DatiAnagraficiRappresentanteType" } } }
+      },
+      {
+        "_attributes": { "name": "DatiAnagraficiRappresentanteType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "IdFiscaleIVA", "type": "IdFiscaleType" } },
+            { "_attributes": { "name": "CodiceFiscale", "type": "CodiceFiscaleType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Anagrafica", "type": "AnagraficaType" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "CessionarioCommittenteType" },
+        "xs:annotation": { "xs:documentation": { "_text": "Blocco relativo ai dati del Cessionario / Committente" } },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "DatiAnagrafici", "type": "DatiAnagraficiCessionarioType" } },
+            { "_attributes": { "name": "Sede", "type": "IndirizzoType" } },
+            { "_attributes": { "name": "StabileOrganizzazione", "type": "IndirizzoType", "minOccurs": "0" } },
+            { "_attributes": { "name": "RappresentanteFiscale", "type": "RappresentanteFiscaleCessionarioType", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "RappresentanteFiscaleCessionarioType" },
+        "xs:sequence": {
+          "xs:element": { "_attributes": { "name": "IdFiscaleIVA", "type": "IdFiscaleType" } },
+          "xs:choice": {
+            "xs:sequence": [
+              { "xs:element": { "_attributes": { "name": "Denominazione", "type": "String80LatinType" } } },
+              {
+                "xs:element": [
+                  { "_attributes": { "name": "Nome", "type": "String60LatinType" } },
+                  { "_attributes": { "name": "Cognome", "type": "String60LatinType" } }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "_attributes": { "name": "DatiAnagraficiCessionarioType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "IdFiscaleIVA", "type": "IdFiscaleType", "minOccurs": "0" } },
+            { "_attributes": { "name": "CodiceFiscale", "type": "CodiceFiscaleType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Anagrafica", "type": "AnagraficaType" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiBeniServiziType" },
+        "xs:annotation": { "xs:documentation": { "_text": "Blocco relativo ai dati di Beni Servizi della Fattura\tElettronica" } },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "DettaglioLinee", "type": "DettaglioLineeType", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "DatiRiepilogo", "type": "DatiRiepilogoType", "maxOccurs": "unbounded" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiVeicoliType" },
+        "xs:annotation": {
+          "xs:documentation": {
+            "_text": "Blocco relativo ai dati dei Veicoli della Fattura Elettronica (da indicare nei casi di cessioni tra Paesi\r\n\t\t\tmembri di mezzi di trasporto nuovi, in base all'art. 38, comma 4 del dl 331 del 1993)"
+          }
+        },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "Data", "type": "xs:date" } },
+            { "_attributes": { "name": "TotalePercorso", "type": "String15Type" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiPagamentoType" },
+        "xs:annotation": { "xs:documentation": { "_text": "Blocco relativo ai dati di Pagamento della Fattura Elettronica" } },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "CondizioniPagamento", "type": "CondizioniPagamentoType" } },
+            { "_attributes": { "name": "DettaglioPagamento", "type": "DettaglioPagamentoType", "maxOccurs": "unbounded" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DettaglioPagamentoType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "Beneficiario", "type": "String200LatinType", "minOccurs": "0" } },
+            { "_attributes": { "name": "ModalitaPagamento", "type": "ModalitaPagamentoType" } },
+            { "_attributes": { "name": "DataRiferimentoTerminiPagamento", "type": "xs:date", "minOccurs": "0" } },
+            { "_attributes": { "name": "GiorniTerminiPagamento", "type": "GiorniTerminePagamentoType", "minOccurs": "0" } },
+            { "_attributes": { "name": "DataScadenzaPagamento", "type": "xs:date", "minOccurs": "0" } },
+            { "_attributes": { "name": "ImportoPagamento", "type": "Amount2DecimalType" } },
+            { "_attributes": { "name": "CodUfficioPostale", "type": "String20Type", "minOccurs": "0" } },
+            { "_attributes": { "name": "CognomeQuietanzante", "type": "String60LatinType", "minOccurs": "0" } },
+            { "_attributes": { "name": "NomeQuietanzante", "type": "String60LatinType", "minOccurs": "0" } },
+            { "_attributes": { "name": "CFQuietanzante", "type": "CodiceFiscalePFType", "minOccurs": "0" } },
+            { "_attributes": { "name": "TitoloQuietanzante", "type": "TitoloType", "minOccurs": "0" } },
+            { "_attributes": { "name": "IstitutoFinanziario", "type": "String80LatinType", "minOccurs": "0" } },
+            { "_attributes": { "name": "IBAN", "type": "IBANType", "minOccurs": "0" } },
+            { "_attributes": { "name": "ABI", "type": "ABIType", "minOccurs": "0" } },
+            { "_attributes": { "name": "CAB", "type": "CABType", "minOccurs": "0" } },
+            { "_attributes": { "name": "BIC", "type": "BICType", "minOccurs": "0" } },
+            { "_attributes": { "name": "ScontoPagamentoAnticipato", "type": "Amount2DecimalType", "minOccurs": "0" } },
+            { "_attributes": { "name": "DataLimitePagamentoAnticipato", "type": "xs:date", "minOccurs": "0" } },
+            { "_attributes": { "name": "PenalitaPagamentiRitardati", "type": "Amount2DecimalType", "minOccurs": "0" } },
+            { "_attributes": { "name": "DataDecorrenzaPenale", "type": "xs:date", "minOccurs": "0" } },
+            { "_attributes": { "name": "CodicePagamento", "type": "String60Type", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "TerzoIntermediarioSoggettoEmittenteType" },
+        "xs:annotation": {
+          "xs:documentation": {
+            "_text": "Blocco relativo ai dati del Terzo Intermediario che emette fattura elettronica per conto del Cedente/Prestatore"
+          }
+        },
+        "xs:sequence": { "xs:element": { "_attributes": { "name": "DatiAnagrafici", "type": "DatiAnagraficiTerzoIntermediarioType" } } }
+      },
+      {
+        "_attributes": { "name": "DatiAnagraficiTerzoIntermediarioType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "IdFiscaleIVA", "type": "IdFiscaleType", "minOccurs": "0" } },
+            { "_attributes": { "name": "CodiceFiscale", "type": "CodiceFiscaleType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Anagrafica", "type": "AnagraficaType" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "AllegatiType" },
+        "xs:annotation": { "xs:documentation": { "_text": "Blocco relativo ai dati di eventuali allegati" } },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "NomeAttachment", "type": "String60LatinType" } },
+            { "_attributes": { "name": "AlgoritmoCompressione", "type": "String10Type", "minOccurs": "0" } },
+            { "_attributes": { "name": "FormatoAttachment", "type": "String10Type", "minOccurs": "0" } },
+            { "_attributes": { "name": "DescrizioneAttachment", "type": "String100LatinType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Attachment", "type": "xs:base64Binary" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DettaglioLineeType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "NumeroLinea", "type": "NumeroLineaType" } },
+            { "_attributes": { "name": "TipoCessionePrestazione", "type": "TipoCessionePrestazioneType", "minOccurs": "0" } },
+            { "_attributes": { "name": "CodiceArticolo", "type": "CodiceArticoloType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "Descrizione", "type": "String1000LatinType" } },
+            { "_attributes": { "name": "Quantita", "type": "QuantitaType", "minOccurs": "0" } },
+            { "_attributes": { "name": "UnitaMisura", "type": "String10Type", "minOccurs": "0" } },
+            { "_attributes": { "name": "DataInizioPeriodo", "type": "xs:date", "minOccurs": "0" } },
+            { "_attributes": { "name": "DataFinePeriodo", "type": "xs:date", "minOccurs": "0" } },
+            { "_attributes": { "name": "PrezzoUnitario", "type": "Amount8DecimalType" } },
+            { "_attributes": { "name": "ScontoMaggiorazione", "type": "ScontoMaggiorazioneType", "minOccurs": "0", "maxOccurs": "unbounded" } },
+            { "_attributes": { "name": "PrezzoTotale", "type": "Amount8DecimalType" } },
+            { "_attributes": { "name": "AliquotaIVA", "type": "RateType" } },
+            { "_attributes": { "name": "Ritenuta", "type": "RitenutaType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Natura", "type": "NaturaType", "minOccurs": "0" } },
+            { "_attributes": { "name": "RiferimentoAmministrazione", "type": "String20Type", "minOccurs": "0" } },
+            { "_attributes": { "name": "AltriDatiGestionali", "type": "AltriDatiGestionaliType", "minOccurs": "0", "maxOccurs": "unbounded" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "CodiceArticoloType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "CodiceTipo", "type": "String35Type" } },
+            { "_attributes": { "name": "CodiceValore", "type": "String35LatinExtType" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "AltriDatiGestionaliType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "TipoDato", "type": "String10Type" } },
+            { "_attributes": { "name": "RiferimentoTesto", "type": "String60LatinType", "minOccurs": "0" } },
+            { "_attributes": { "name": "RiferimentoNumero", "type": "Amount8DecimalType", "minOccurs": "0" } },
+            { "_attributes": { "name": "RiferimentoData", "type": "xs:date", "minOccurs": "0" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "DatiRiepilogoType" },
+        "xs:sequence": {
+          "xs:element": [
+            { "_attributes": { "name": "AliquotaIVA", "type": "RateType" } },
+            { "_attributes": { "name": "Natura", "type": "NaturaType", "minOccurs": "0" } },
+            { "_attributes": { "name": "SpeseAccessorie", "type": "Amount2DecimalType", "minOccurs": "0" } },
+            { "_attributes": { "name": "Arrotondamento", "type": "Amount8DecimalType", "minOccurs": "0" } },
+            { "_attributes": { "name": "ImponibileImporto", "type": "Amount2DecimalType" } },
+            { "_attributes": { "name": "Imposta", "type": "Amount2DecimalType" } },
+            { "_attributes": { "name": "EsigibilitaIVA", "type": "EsigibilitaIVAType", "minOccurs": "0" } },
+            { "_attributes": { "name": "RiferimentoNormativo", "type": "String100LatinType", "minOccurs": "0" } }
+          ]
+        }
+      }
+    ],
+    "xs:simpleType": [
+      {
+        "_attributes": { "name": "CodiceDestinatarioType" },
+        "xs:restriction": { "_attributes": { "base": "xs:string" }, "xs:pattern": { "_attributes": { "value": "[A-Z0-9]{6,7}" } } }
+      },
+      {
+        "_attributes": { "name": "CodiceType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:minLength": { "_attributes": { "value": "1" } },
+          "xs:maxLength": { "_attributes": { "value": "28" } }
+        }
+      },
+      {
+        "_attributes": { "name": "FormatoTrasmissioneType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:length": { "_attributes": { "value": "5" } },
+          "xs:enumeration": [
+            { "_attributes": { "value": "FPA12" }, "xs:annotation": { "xs:documentation": { "_text": "Fattura verso PA" } } },
+            { "_attributes": { "value": "FPR12" }, "xs:annotation": { "xs:documentation": { "_text": "Fattura verso privati" } } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "CausalePagamentoType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "_comment": [
+            "I CODICI SEGUENTI FANNO RIFERIMENTO A QUELLI PREVISTI NEL MOD. CU",
+            " IL CODICE SEGUENTE (Z) NON SARA' PIU' VALIDO PER LE FATTURE EMESSE A PARTIRE DAL PRIMO GENNAIO 2021"
+          ],
+          "xs:enumeration": [
+            { "_attributes": { "value": "A" } },
+            { "_attributes": { "value": "B" } },
+            { "_attributes": { "value": "C" } },
+            { "_attributes": { "value": "D" } },
+            { "_attributes": { "value": "E" } },
+            { "_attributes": { "value": "G" } },
+            { "_attributes": { "value": "H" } },
+            { "_attributes": { "value": "I" } },
+            { "_attributes": { "value": "L" } },
+            { "_attributes": { "value": "M" } },
+            { "_attributes": { "value": "N" } },
+            { "_attributes": { "value": "O" } },
+            { "_attributes": { "value": "P" } },
+            { "_attributes": { "value": "Q" } },
+            { "_attributes": { "value": "R" } },
+            { "_attributes": { "value": "S" } },
+            { "_attributes": { "value": "T" } },
+            { "_attributes": { "value": "U" } },
+            { "_attributes": { "value": "V" } },
+            { "_attributes": { "value": "W" } },
+            { "_attributes": { "value": "X" } },
+            { "_attributes": { "value": "Y" } },
+            { "_attributes": { "value": "Z" } },
+            { "_attributes": { "value": "L1" } },
+            { "_attributes": { "value": "M1" } },
+            { "_attributes": { "value": "M2" } },
+            { "_attributes": { "value": "O1" } },
+            { "_attributes": { "value": "V1" } },
+            { "_attributes": { "value": "ZO" } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "TipoScontoMaggiorazioneType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:length": { "_attributes": { "value": "2" } },
+          "xs:enumeration": [
+            { "_attributes": { "value": "SC" }, "xs:annotation": { "xs:documentation": { "_text": "SC = Sconto" } } },
+            { "_attributes": { "value": "MG" }, "xs:annotation": { "xs:documentation": { "_text": "MG = Maggiorazione" } } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "Art73Type" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:length": { "_attributes": { "value": "2" } },
+          "xs:enumeration": {
+            "_attributes": { "value": "SI" },
+            "xs:annotation": {
+              "xs:documentation": { "_text": "SI = Documento emesso secondo modalità e termini stabiliti con DM ai sensi dell'art. 73 DPR 633/72" }
+            }
+          }
+        }
+      },
+      {
+        "_attributes": { "name": "TipoCassaType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:length": { "_attributes": { "value": "4" } },
+          "xs:enumeration": [
+            {
+              "_attributes": { "value": "TC01" },
+              "xs:annotation": { "xs:documentation": { "_text": "Cassa nazionale previdenza e assistenza avvocati e procuratori legali" } }
+            },
+            { "_attributes": { "value": "TC02" }, "xs:annotation": { "xs:documentation": { "_text": "Cassa previdenza dottori commercialisti" } } },
+            { "_attributes": { "value": "TC03" }, "xs:annotation": { "xs:documentation": { "_text": "Cassa previdenza e assistenza geometri" } } },
+            {
+              "_attributes": { "value": "TC04" },
+              "xs:annotation": {
+                "xs:documentation": { "_text": "Cassa nazionale previdenza e assistenza ingegneri e architetti liberi professionisti" }
+              }
+            },
+            { "_attributes": { "value": "TC05" }, "xs:annotation": { "xs:documentation": { "_text": "Cassa nazionale del notariato" } } },
+            {
+              "_attributes": { "value": "TC06" },
+              "xs:annotation": { "xs:documentation": { "_text": "Cassa nazionale previdenza e assistenza ragionieri e periti commerciali" } }
+            },
+            {
+              "_attributes": { "value": "TC07" },
+              "xs:annotation": { "xs:documentation": { "_text": "Ente nazionale assistenza agenti e rappresentanti di commercio (ENASARCO)" } }
+            },
+            {
+              "_attributes": { "value": "TC08" },
+              "xs:annotation": { "xs:documentation": { "_text": "Ente nazionale previdenza e assistenza consulenti del lavoro (ENPACL)" } }
+            },
+            {
+              "_attributes": { "value": "TC09" },
+              "xs:annotation": { "xs:documentation": { "_text": "Ente nazionale previdenza e assistenza medici (ENPAM)" } }
+            },
+            {
+              "_attributes": { "value": "TC10" },
+              "xs:annotation": { "xs:documentation": { "_text": "Ente nazionale previdenza e assistenza farmacisti (ENPAF)" } }
+            },
+            {
+              "_attributes": { "value": "TC11" },
+              "xs:annotation": { "xs:documentation": { "_text": "Ente nazionale previdenza e assistenza veterinari (ENPAV)" } }
+            },
+            {
+              "_attributes": { "value": "TC12" },
+              "xs:annotation": { "xs:documentation": { "_text": "Ente nazionale previdenza e assistenza impiegati dell'agricoltura (ENPAIA)" } }
+            },
+            {
+              "_attributes": { "value": "TC13" },
+              "xs:annotation": { "xs:documentation": { "_text": "Fondo previdenza impiegati imprese di spedizione e agenzie marittime" } }
+            },
+            {
+              "_attributes": { "value": "TC14" },
+              "xs:annotation": { "xs:documentation": { "_text": "Istituto nazionale previdenza giornalisti italiani (INPGI)" } }
+            },
+            {
+              "_attributes": { "value": "TC15" },
+              "xs:annotation": { "xs:documentation": { "_text": "Opera nazionale assistenza orfani sanitari italiani (ONAOSI)" } }
+            },
+            {
+              "_attributes": { "value": "TC16" },
+              "xs:annotation": { "xs:documentation": { "_text": "Cassa autonoma assistenza integrativa giornalisti italiani (CASAGIT)" } }
+            },
+            {
+              "_attributes": { "value": "TC17" },
+              "xs:annotation": { "xs:documentation": { "_text": "Ente previdenza periti industriali e periti industriali laureati (EPPI)" } }
+            },
+            {
+              "_attributes": { "value": "TC18" },
+              "xs:annotation": { "xs:documentation": { "_text": "Ente previdenza e assistenza pluricategoriale (EPAP)" } }
+            },
+            {
+              "_attributes": { "value": "TC19" },
+              "xs:annotation": { "xs:documentation": { "_text": "Ente nazionale previdenza e assistenza biologi (ENPAB)" } }
+            },
+            {
+              "_attributes": { "value": "TC20" },
+              "xs:annotation": { "xs:documentation": { "_text": "Ente nazionale previdenza e assistenza professione infermieristica (ENPAPI)" } }
+            },
+            {
+              "_attributes": { "value": "TC21" },
+              "xs:annotation": { "xs:documentation": { "_text": "Ente nazionale previdenza e assistenza psicologi (ENPAP)" } }
+            },
+            { "_attributes": { "value": "TC22" }, "xs:annotation": { "xs:documentation": { "_text": "INPS" } } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "TipoDocumentoType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:length": { "_attributes": { "value": "4" } },
+          "xs:enumeration": [
+            { "_attributes": { "value": "TD01" }, "xs:annotation": { "xs:documentation": { "_text": "Fattura" } } },
+            { "_attributes": { "value": "TD02" }, "xs:annotation": { "xs:documentation": { "_text": "Acconto / anticipo su fattura" } } },
+            { "_attributes": { "value": "TD03" }, "xs:annotation": { "xs:documentation": { "_text": "Acconto / anticipo su parcella" } } },
+            { "_attributes": { "value": "TD04" }, "xs:annotation": { "xs:documentation": { "_text": "Nota di credito" } } },
+            { "_attributes": { "value": "TD05" }, "xs:annotation": { "xs:documentation": { "_text": "Nota di debito" } } },
+            { "_attributes": { "value": "TD06" }, "xs:annotation": { "xs:documentation": { "_text": "Parcella" } } },
+            {
+              "_attributes": { "value": "TD16" },
+              "xs:annotation": { "xs:documentation": { "_text": "Integrazione fattura reverse charge interno" } }
+            },
+            {
+              "_attributes": { "value": "TD17" },
+              "xs:annotation": { "xs:documentation": { "_text": "Integrazione/autofattura per acquisto servizi dall'estero" } }
+            },
+            {
+              "_attributes": { "value": "TD18" },
+              "xs:annotation": { "xs:documentation": { "_text": "Integrazione per acquisto di beni intracomunitari" } }
+            },
+            {
+              "_attributes": { "value": "TD19" },
+              "xs:annotation": { "xs:documentation": { "_text": "Integrazione/autofattura per acquisto di beni ex art.17 c.2 DPR 633/72" } }
+            },
+            {
+              "_attributes": { "value": "TD20" },
+              "xs:annotation": {
+                "xs:documentation": {
+                  "_text": "Autofattura per regolarizzazione e integrazione delle fatture (ex art.6 c.8 e 9-bis d.lgs.471/97 o art.46 c.5 D.L. 331/93"
+                }
+              }
+            },
+            { "_attributes": { "value": "TD21" }, "xs:annotation": { "xs:documentation": { "_text": "Autofattura per splafonamento" } } },
+            { "_attributes": { "value": "TD22" }, "xs:annotation": { "xs:documentation": { "_text": "Estrazione benida Deposito IVA" } } },
+            {
+              "_attributes": { "value": "TD23" },
+              "xs:annotation": { "xs:documentation": { "_text": "Estrazione beni da Deposito IVA con versamento dell'IVA" } }
+            },
+            {
+              "_attributes": { "value": "TD24" },
+              "xs:annotation": { "xs:documentation": { "_text": "Fattura differita di cui all'art.21, comma 4, terzo periodo lett. a) DPR 633/72" } }
+            },
+            {
+              "_attributes": { "value": "TD25" },
+              "xs:annotation": { "xs:documentation": { "_text": "Fattura differita di cui all'art.21, comma 4, terzo periodo lett. b) DPR 633/72" } }
+            },
+            {
+              "_attributes": { "value": "TD26" },
+              "xs:annotation": { "xs:documentation": { "_text": "Cessione di beni ammortizzabili e per passaggi interni (ex art.36 DPR 633/72)" } }
+            },
+            {
+              "_attributes": { "value": "TD27" },
+              "xs:annotation": { "xs:documentation": { "_text": "Fattura per autoconsumo o per cessioni gratuite senza rivalsa" } }
+            },
+            {
+              "_attributes": { "value": "TD28" },
+              "xs:annotation": { "xs:documentation": { "_text": "Acquisti da San Marino con IVA (fattura cartacea)" } }
+            }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "TipoRitenutaType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:length": { "_attributes": { "value": "4" } },
+          "xs:enumeration": [
+            { "_attributes": { "value": "RT01" }, "xs:annotation": { "xs:documentation": { "_text": "Ritenuta di acconto persone fisiche" } } },
+            { "_attributes": { "value": "RT02" }, "xs:annotation": { "xs:documentation": { "_text": "Ritenuta di acconto persone giuridiche" } } },
+            { "_attributes": { "value": "RT03" }, "xs:annotation": { "xs:documentation": { "_text": "Contributo INPS" } } },
+            { "_attributes": { "value": "RT04" }, "xs:annotation": { "xs:documentation": { "_text": "Contributo ENASARCO" } } },
+            { "_attributes": { "value": "RT05" }, "xs:annotation": { "xs:documentation": { "_text": "Contributo ENPAM" } } },
+            { "_attributes": { "value": "RT06" }, "xs:annotation": { "xs:documentation": { "_text": "Altro contributo previdenziale" } } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "RiferimentoNumeroLineaType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:integer" },
+          "xs:minInclusive": { "_attributes": { "value": "1" } },
+          "xs:maxInclusive": { "_attributes": { "value": "9999" } }
+        }
+      },
+      {
+        "_attributes": { "name": "SoggettoEmittenteType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:length": { "_attributes": { "value": "2" } },
+          "xs:enumeration": [
+            { "_attributes": { "value": "CC" }, "xs:annotation": { "xs:documentation": { "_text": "Cessionario / Committente" } } },
+            { "_attributes": { "value": "TZ" }, "xs:annotation": { "xs:documentation": { "_text": "Terzo" } } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "RegimeFiscaleType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:length": { "_attributes": { "value": "4" } },
+          "xs:enumeration": [
+            { "_attributes": { "value": "RF01" }, "xs:annotation": { "xs:documentation": { "_text": " Regime ordinario" } } },
+            {
+              "_attributes": { "value": "RF02" },
+              "xs:annotation": { "xs:documentation": { "_text": "Regime dei contribuenti minimi (art. 1,c.96-117, L. 244/2007)" } }
+            },
+            {
+              "_attributes": { "value": "RF04" },
+              "xs:annotation": { "xs:documentation": { "_text": "Agricoltura e attività connesse e pesca (artt. 34 e 34-bis, D.P.R. 633/1972)" } }
+            },
+            {
+              "_attributes": { "value": "RF05" },
+              "xs:annotation": { "xs:documentation": { "_text": "Vendita sali e tabacchi (art. 74, c.1, D.P.R. 633/1972)" } }
+            },
+            {
+              "_attributes": { "value": "RF06" },
+              "xs:annotation": { "xs:documentation": { "_text": "Commercio dei fiammiferi (art. 74, c.1, D.P.R. 633/1972)" } }
+            },
+            { "_attributes": { "value": "RF07" }, "xs:annotation": { "xs:documentation": { "_text": "Editoria (art. 74, c.1, D.P.R. 633/1972)" } } },
+            {
+              "_attributes": { "value": "RF08" },
+              "xs:annotation": { "xs:documentation": { "_text": "Gestione di servizi di telefonia pubblica (art. 74, c.1, D.P.R. 633/1972)" } }
+            },
+            {
+              "_attributes": { "value": "RF09" },
+              "xs:annotation": {
+                "xs:documentation": { "_text": "Rivendita di documenti di trasporto pubblico e di sosta (art. 74, c.1, D.P.R. 633/1972)" }
+              }
+            },
+            {
+              "_attributes": { "value": "RF10" },
+              "xs:annotation": {
+                "xs:documentation": {
+                  "_text": "Intrattenimenti, giochi e altre attività\tdi cui alla tariffa allegata al D.P.R. 640/72 (art. 74, c.6, D.P.R. 633/1972)"
+                }
+              }
+            },
+            {
+              "_attributes": { "value": "RF11" },
+              "xs:annotation": { "xs:documentation": { "_text": "Agenzie di viaggi e turismo (art. 74-ter, D.P.R. 633/1972)" } }
+            },
+            { "_attributes": { "value": "RF12" }, "xs:annotation": { "xs:documentation": { "_text": "Agriturismo (art. 5, c.2, L. 413/1991)" } } },
+            {
+              "_attributes": { "value": "RF13" },
+              "xs:annotation": { "xs:documentation": { "_text": "Vendite a domicilio (art. 25-bis, c.6, D.P.R. 600/1973)" } }
+            },
+            {
+              "_attributes": { "value": "RF14" },
+              "xs:annotation": {
+                "xs:documentation": {
+                  "_text": "Rivendita di beni usati, di oggetti\td’arte, d’antiquariato o da collezione (art.\t36, D.L. 41/1995)"
+                }
+              }
+            },
+            {
+              "_attributes": { "value": "RF15" },
+              "xs:annotation": {
+                "xs:documentation": {
+                  "_text": "Agenzie di vendite all’asta di oggetti d’arte, antiquariato o da collezione (art. 40-bis, D.L. 41/1995)"
+                }
+              }
+            },
+            {
+              "_attributes": { "value": "RF16" },
+              "xs:annotation": { "xs:documentation": { "_text": "IVA per cassa P.A. (art. 6, c.5, D.P.R. 633/1972)" } }
+            },
+            { "_attributes": { "value": "RF17" }, "xs:annotation": { "xs:documentation": { "_text": "IVA per cassa (art. 32-bis, D.L. 83/2012)" } } },
+            { "_attributes": { "value": "RF19" }, "xs:annotation": { "xs:documentation": { "_text": "Regime forfettario" } } },
+            { "_attributes": { "value": "RF18" }, "xs:annotation": { "xs:documentation": { "_text": "Altro" } } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "CondizioniPagamentoType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:minLength": { "_attributes": { "value": "4" } },
+          "xs:maxLength": { "_attributes": { "value": "4" } },
+          "xs:enumeration": [
+            { "_attributes": { "value": "TP01" }, "xs:annotation": { "xs:documentation": { "_text": "pagamento a rate" } } },
+            { "_attributes": { "value": "TP02" }, "xs:annotation": { "xs:documentation": { "_text": "pagamento completo" } } },
+            { "_attributes": { "value": "TP03" }, "xs:annotation": { "xs:documentation": { "_text": "anticipo" } } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "ModalitaPagamentoType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:length": { "_attributes": { "value": "4" } },
+          "xs:enumeration": [
+            { "_attributes": { "value": "MP01" }, "xs:annotation": { "xs:documentation": { "_text": "contanti" } } },
+            { "_attributes": { "value": "MP02" }, "xs:annotation": { "xs:documentation": { "_text": "assegno" } } },
+            { "_attributes": { "value": "MP03" }, "xs:annotation": { "xs:documentation": { "_text": "assegno circolare" } } },
+            { "_attributes": { "value": "MP04" }, "xs:annotation": { "xs:documentation": { "_text": "contanti presso Tesoreria" } } },
+            { "_attributes": { "value": "MP05" }, "xs:annotation": { "xs:documentation": { "_text": "bonifico" } } },
+            { "_attributes": { "value": "MP06" }, "xs:annotation": { "xs:documentation": { "_text": "vaglia cambiario" } } },
+            { "_attributes": { "value": "MP07" }, "xs:annotation": { "xs:documentation": { "_text": "bollettino bancario" } } },
+            { "_attributes": { "value": "MP08" }, "xs:annotation": { "xs:documentation": { "_text": "carta di pagamento" } } },
+            { "_attributes": { "value": "MP09" }, "xs:annotation": { "xs:documentation": { "_text": "RID" } } },
+            { "_attributes": { "value": "MP10" }, "xs:annotation": { "xs:documentation": { "_text": "RID utenze" } } },
+            { "_attributes": { "value": "MP11" }, "xs:annotation": { "xs:documentation": { "_text": "RID veloce" } } },
+            { "_attributes": { "value": "MP12" }, "xs:annotation": { "xs:documentation": { "_text": "RIBA" } } },
+            { "_attributes": { "value": "MP13" }, "xs:annotation": { "xs:documentation": { "_text": "MAV" } } },
+            { "_attributes": { "value": "MP14" }, "xs:annotation": { "xs:documentation": { "_text": "quietanza erario" } } },
+            {
+              "_attributes": { "value": "MP15" },
+              "xs:annotation": { "xs:documentation": { "_text": "giroconto su conti di contabilità speciale" } }
+            },
+            { "_attributes": { "value": "MP16" }, "xs:annotation": { "xs:documentation": { "_text": "domiciliazione bancaria" } } },
+            { "_attributes": { "value": "MP17" }, "xs:annotation": { "xs:documentation": { "_text": "domiciliazione postale" } } },
+            { "_attributes": { "value": "MP18" }, "xs:annotation": { "xs:documentation": { "_text": "bollettino di c/c postale" } } },
+            { "_attributes": { "value": "MP19" }, "xs:annotation": { "xs:documentation": { "_text": "SEPA Direct Debit" } } },
+            { "_attributes": { "value": "MP20" }, "xs:annotation": { "xs:documentation": { "_text": "SEPA Direct Debit CORE" } } },
+            { "_attributes": { "value": "MP21" }, "xs:annotation": { "xs:documentation": { "_text": "SEPA Direct Debit B2B" } } },
+            { "_attributes": { "value": "MP22" }, "xs:annotation": { "xs:documentation": { "_text": "Trattenuta su somme già riscosse" } } },
+            { "_attributes": { "value": "MP23" }, "xs:annotation": { "xs:documentation": { "_text": "PagoPA" } } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "IBANType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:pattern": { "_attributes": { "value": "[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{11,30}" } }
+        }
+      },
+      {
+        "_attributes": { "name": "BICType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:pattern": { "_attributes": { "value": "[A-Z]{6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3}){0,1}" } }
+        }
+      },
+      {
+        "_attributes": { "name": "RitenutaType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:length": { "_attributes": { "value": "2" } },
+          "xs:enumeration": {
+            "_attributes": { "value": "SI" },
+            "xs:annotation": { "xs:documentation": { "_text": "SI = Cessione / Prestazione soggetta a ritenuta" } }
+          }
+        }
+      },
+      {
+        "_attributes": { "name": "EsigibilitaIVAType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:minLength": { "_attributes": { "value": "1" } },
+          "xs:maxLength": { "_attributes": { "value": "1" } },
+          "xs:enumeration": [
+            { "_attributes": { "value": "D" }, "xs:annotation": { "xs:documentation": { "_text": "esigibilità differita" } } },
+            { "_attributes": { "value": "I" }, "xs:annotation": { "xs:documentation": { "_text": "esigibilità immediata" } } },
+            { "_attributes": { "value": "S" }, "xs:annotation": { "xs:documentation": { "_text": "scissione dei pagamenti" } } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "NaturaType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:enumeration": [
+            { "_attributes": { "value": "N1" }, "xs:annotation": { "xs:documentation": { "_text": "Escluse ex. art. 15 del D.P.R. 633/1972" } } },
+            { "_attributes": { "value": "N2" }, "xs:annotation": { "xs:documentation": { "_text": "Non soggette" } } },
+            {
+              "_attributes": { "value": "N2.1" },
+              "xs:annotation": { "xs:documentation": { "_text": "Non soggette ad IVA ai sensi degli artt. da 7 a 7-septies del DPR 633/72" } }
+            },
+            { "_attributes": { "value": "N2.2" }, "xs:annotation": { "xs:documentation": { "_text": "Non soggette - altri casi" } } },
+            { "_attributes": { "value": "N3" }, "xs:annotation": { "xs:documentation": { "_text": "Non imponibili" } } },
+            { "_attributes": { "value": "N3.1" }, "xs:annotation": { "xs:documentation": { "_text": "Non Imponibili - esportazioni" } } },
+            {
+              "_attributes": { "value": "N3.2" },
+              "xs:annotation": { "xs:documentation": { "_text": "Non Imponibili - cessioni intracomunitarie" } }
+            },
+            {
+              "_attributes": { "value": "N3.3" },
+              "xs:annotation": { "xs:documentation": { "_text": "Non Imponibili - cessioni verso San Marino" } }
+            },
+            {
+              "_attributes": { "value": "N3.4" },
+              "xs:annotation": { "xs:documentation": { "_text": "Non Imponibili - operazioni assimilate alle cessioni all'esportazione" } }
+            },
+            {
+              "_attributes": { "value": "N3.5" },
+              "xs:annotation": { "xs:documentation": { "_text": "Non Imponibili - a seguito di dichiarazioni d'intento" } }
+            },
+            {
+              "_attributes": { "value": "N3.6" },
+              "xs:annotation": { "xs:documentation": { "_text": "Non Imponibili - altre operazioni che non concorrono alla formazione del plafond" } }
+            },
+            { "_attributes": { "value": "N4" }, "xs:annotation": { "xs:documentation": { "_text": "Esenti" } } },
+            {
+              "_attributes": { "value": "N5" },
+              "xs:annotation": { "xs:documentation": { "_text": "Regime del margine/IVA non esposta in fattura" } }
+            },
+            {
+              "_attributes": { "value": "N6" },
+              "xs:annotation": {
+                "xs:documentation": {
+                  "_text": "Inversione contabile (per le operazioni in reverse charge ovvero nei casi di autofatturazione per acquisti extra UE di servizi ovvero per importazioni di beni nei soli casi previsti)"
+                }
+              }
+            },
+            {
+              "_attributes": { "value": "N6.1" },
+              "xs:annotation": { "xs:documentation": { "_text": "Inversione contabile - cessione di rottami e altri materiali di recupero" } }
+            },
+            {
+              "_attributes": { "value": "N6.2" },
+              "xs:annotation": {
+                "xs:documentation": {
+                  "_text": "Inversione contabile - cessione di oro e argento ai sensi della legge 7/2000 nonché di oreficeria usata ad OPO"
+                }
+              }
+            },
+            {
+              "_attributes": { "value": "N6.3" },
+              "xs:annotation": { "xs:documentation": { "_text": "Inversione contabile - subappalto nel settore edile" } }
+            },
+            {
+              "_attributes": { "value": "N6.4" },
+              "xs:annotation": { "xs:documentation": { "_text": "Inversione contabile - cessione di fabbricati" } }
+            },
+            {
+              "_attributes": { "value": "N6.5" },
+              "xs:annotation": { "xs:documentation": { "_text": "Inversione contabile - cessione di telefoni cellulari" } }
+            },
+            {
+              "_attributes": { "value": "N6.6" },
+              "xs:annotation": { "xs:documentation": { "_text": "Inversione contabile - cessione di prodotti elettronici" } }
+            },
+            {
+              "_attributes": { "value": "N6.7" },
+              "xs:annotation": { "xs:documentation": { "_text": "Inversione contabile - prestazioni comparto edile e settori connessi" } }
+            },
+            {
+              "_attributes": { "value": "N6.8" },
+              "xs:annotation": { "xs:documentation": { "_text": "Inversione contabile - operazioni settore energetico" } }
+            },
+            { "_attributes": { "value": "N6.9" }, "xs:annotation": { "xs:documentation": { "_text": "Inversione contabile - altri casi" } } },
+            {
+              "_attributes": { "value": "N7" },
+              "xs:annotation": {
+                "xs:documentation": {
+                  "_text": "IVA assolta in altro stato UE (prestazione di servizi di telecomunicazioni, tele-radiodiffusione ed elettronici ex art. 7-octies lett. a, b, art. 74-sexies DPR 633/72)"
+                }
+              }
+            }
+          ],
+          "_comment": [
+            " IL CODICE SEGUENTE (N2) NON SARA' PIU' VALIDO PER LE FATTURE EMESSE A PARTIRE DAL PRIMO GENNAIO 2021",
+            " IL CODICE SEGUENTE (N3) NON SARA' PIU' VALIDO PER LE FATTURE EMESSE A PARTIRE DAL PRIMO GENNAIO 2021",
+            " IL CODICE SEGUENTE (N6) NON SARA' PIU' VALIDO PER LE FATTURE EMESSE A PARTIRE DAL PRIMO GENNAIO 2021"
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "CodiceFiscaleType" },
+        "xs:restriction": { "_attributes": { "base": "xs:string" }, "xs:pattern": { "_attributes": { "value": "[A-Z0-9]{11,16}" } } }
+      },
+      {
+        "_attributes": { "name": "CodiceFiscalePFType" },
+        "xs:restriction": { "_attributes": { "base": "xs:string" }, "xs:pattern": { "_attributes": { "value": "[A-Z0-9]{16}" } } }
+      },
+      {
+        "_attributes": { "name": "CodEORIType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:minLength": { "_attributes": { "value": "13" } },
+          "xs:maxLength": { "_attributes": { "value": "17" } }
+        }
+      },
+      {
+        "_attributes": { "name": "SocioUnicoType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:enumeration": [
+            { "_attributes": { "value": "SU" }, "xs:annotation": { "xs:documentation": { "_text": "socio unico" } } },
+            { "_attributes": { "value": "SM" }, "xs:annotation": { "xs:documentation": { "_text": "più soci" } } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "StatoLiquidazioneType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:enumeration": [
+            { "_attributes": { "value": "LS" }, "xs:annotation": { "xs:documentation": { "_text": "in liquidazione" } } },
+            { "_attributes": { "value": "LN" }, "xs:annotation": { "xs:documentation": { "_text": "non in liquidazione" } } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "TipoCessionePrestazioneType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:length": { "_attributes": { "value": "2" } },
+          "xs:enumeration": [
+            { "_attributes": { "value": "SC" }, "xs:annotation": { "xs:documentation": { "_text": "Sconto" } } },
+            { "_attributes": { "value": "PR" }, "xs:annotation": { "xs:documentation": { "_text": "Premio" } } },
+            { "_attributes": { "value": "AB" }, "xs:annotation": { "xs:documentation": { "_text": "Abbuono" } } },
+            { "_attributes": { "value": "AC" }, "xs:annotation": { "xs:documentation": { "_text": "Spesa accessoria" } } }
+          ]
+        }
+      },
+      {
+        "_attributes": { "name": "TitoloType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:whiteSpace": { "_attributes": { "value": "collapse" } },
+          "xs:pattern": { "_attributes": { "value": "(\\p{IsBasicLatin}{2,10})" } }
+        }
+      },
+      {
+        "_attributes": { "name": "String10Type" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "(\\p{IsBasicLatin}{1,10})" } }
+        }
+      },
+      {
+        "_attributes": { "name": "String15Type" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "(\\p{IsBasicLatin}{1,15})" } }
+        }
+      },
+      {
+        "_attributes": { "name": "String20Type" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "(\\p{IsBasicLatin}{1,20})" } }
+        }
+      },
+      {
+        "_attributes": { "name": "String35Type" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "(\\p{IsBasicLatin}{1,35})" } }
+        }
+      },
+      {
+        "_attributes": { "name": "String35LatinExtType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:minLength": { "_attributes": { "value": "1" } },
+          "xs:maxLength": { "_attributes": { "value": "35" } }
+        }
+      },
+      {
+        "_attributes": { "name": "String60Type" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "(\\p{IsBasicLatin}{1,60})" } }
+        }
+      },
+      {
+        "_attributes": { "name": "String80Type" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "(\\p{IsBasicLatin}{1,80})" } }
+        }
+      },
+      {
+        "_attributes": { "name": "String100Type" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "(\\p{IsBasicLatin}{1,100})" } }
+        }
+      },
+      {
+        "_attributes": { "name": "String60LatinType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "[\\p{IsBasicLatin}\\p{IsLatin-1Supplement}]{1,60}" } }
+        }
+      },
+      {
+        "_attributes": { "name": "String80LatinType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "[\\p{IsBasicLatin}\\p{IsLatin-1Supplement}]{1,80}" } }
+        }
+      },
+      {
+        "_attributes": { "name": "String100LatinType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "[\\p{IsBasicLatin}\\p{IsLatin-1Supplement}]{1,100}" } }
+        }
+      },
+      {
+        "_attributes": { "name": "String200LatinType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "[\\p{IsBasicLatin}\\p{IsLatin-1Supplement}]{1,200}" } }
+        }
+      },
+      {
+        "_attributes": { "name": "String1000LatinType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "[\\p{IsBasicLatin}\\p{IsLatin-1Supplement}]{1,1000}" } }
+        }
+      },
+      {
+        "_attributes": { "name": "ProvinciaType" },
+        "xs:restriction": { "_attributes": { "base": "xs:string" }, "xs:pattern": { "_attributes": { "value": "[A-Z]{2}" } } }
+      },
+      {
+        "_attributes": { "name": "NazioneType" },
+        "xs:restriction": { "_attributes": { "base": "xs:string" }, "xs:pattern": { "_attributes": { "value": "[A-Z]{2}" } } }
+      },
+      {
+        "_attributes": { "name": "DivisaType" },
+        "xs:restriction": { "_attributes": { "base": "xs:string" }, "xs:pattern": { "_attributes": { "value": "[A-Z]{3}" } } }
+      },
+      {
+        "_attributes": { "name": "TipoResaType" },
+        "xs:restriction": { "_attributes": { "base": "xs:string" }, "xs:pattern": { "_attributes": { "value": "[A-Z]{3}" } } }
+      },
+      {
+        "_attributes": { "name": "NumeroCivicoType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "(\\p{IsBasicLatin}{1,8})" } }
+        }
+      },
+      {
+        "_attributes": { "name": "BolloVirtualeType" },
+        "xs:restriction": { "_attributes": { "base": "xs:string" }, "xs:enumeration": { "_attributes": { "value": "SI" } } }
+      },
+      {
+        "_attributes": { "name": "TelFaxType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:normalizedString" },
+          "xs:pattern": { "_attributes": { "value": "(\\p{IsBasicLatin}{5,12})" } }
+        }
+      },
+      {
+        "_attributes": { "name": "EmailType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:token" },
+          "xs:maxLength": { "_attributes": { "value": "256" } },
+          "xs:pattern": {
+            "_attributes": {
+              "value": "([!#-'*+/-9=?A-Z^-~-]+(\\.[!#-'*+/-9=?A-Z^-~-]+)*|\"(\\[\\]!#-[^-~ \\t]|(\\\\[\\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\\.[!#-'*+/-9=?A-Z^-~-]+)*|\\[[\\t -Z^-~]*\\])"
+            }
+          }
+        }
+      },
+      {
+        "_attributes": { "name": "EmailContattiType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:string" },
+          "xs:minLength": { "_attributes": { "value": "7" } },
+          "xs:maxLength": { "_attributes": { "value": "256" } },
+          "xs:pattern": { "_attributes": { "value": ".+@.+[.]+.+" } }
+        }
+      },
+      {
+        "_attributes": { "name": "PesoType" },
+        "xs:restriction": { "_attributes": { "base": "xs:decimal" }, "xs:pattern": { "_attributes": { "value": "[0-9]{1,4}\\.[0-9]{1,2}" } } }
+      },
+      {
+        "_attributes": { "name": "Amount8DecimalType" },
+        "xs:restriction": { "_attributes": { "base": "xs:decimal" }, "xs:pattern": { "_attributes": { "value": "[\\-]?[0-9]{1,11}\\.[0-9]{2,8}" } } }
+      },
+      {
+        "_attributes": { "name": "Amount2DecimalType" },
+        "xs:restriction": { "_attributes": { "base": "xs:decimal" }, "xs:pattern": { "_attributes": { "value": "[\\-]?[0-9]{1,11}\\.[0-9]{2}" } } }
+      },
+      {
+        "_attributes": { "name": "RateType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:decimal" },
+          "xs:maxInclusive": { "_attributes": { "value": "100.00" } },
+          "xs:pattern": { "_attributes": { "value": "[0-9]{1,3}\\.[0-9]{2}" } }
+        }
+      },
+      {
+        "_attributes": { "name": "RiferimentoFaseType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:integer" },
+          "xs:minInclusive": { "_attributes": { "value": "1" } },
+          "xs:maxInclusive": { "_attributes": { "value": "999" } }
+        }
+      },
+      {
+        "_attributes": { "name": "NumeroColliType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:integer" },
+          "xs:minInclusive": { "_attributes": { "value": "1" } },
+          "xs:maxInclusive": { "_attributes": { "value": "9999" } }
+        }
+      },
+      {
+        "_attributes": { "name": "NumeroLineaType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:integer" },
+          "xs:minInclusive": { "_attributes": { "value": "1" } },
+          "xs:maxInclusive": { "_attributes": { "value": "9999" } }
+        }
+      },
+      {
+        "_attributes": { "name": "CAPType" },
+        "xs:restriction": { "_attributes": { "base": "xs:string" }, "xs:pattern": { "_attributes": { "value": "[0-9][0-9][0-9][0-9][0-9]" } } }
+      },
+      {
+        "_attributes": { "name": "ABIType" },
+        "xs:restriction": { "_attributes": { "base": "xs:string" }, "xs:pattern": { "_attributes": { "value": "[0-9][0-9][0-9][0-9][0-9]" } } }
+      },
+      {
+        "_attributes": { "name": "CABType" },
+        "xs:restriction": { "_attributes": { "base": "xs:string" }, "xs:pattern": { "_attributes": { "value": "[0-9][0-9][0-9][0-9][0-9]" } } }
+      },
+      {
+        "_attributes": { "name": "GiorniTerminePagamentoType" },
+        "xs:restriction": {
+          "_attributes": { "base": "xs:integer" },
+          "xs:minInclusive": { "_attributes": { "value": "0" } },
+          "xs:maxInclusive": { "_attributes": { "value": "999" } }
+        }
+      },
+      {
+        "_attributes": { "name": "QuantitaType" },
+        "xs:restriction": { "_attributes": { "base": "xs:decimal" }, "xs:pattern": { "_attributes": { "value": "[0-9]{1,12}\\.[0-9]{2,8}" } } }
+      },
+      {
+        "_attributes": { "name": "DataFatturaType" },
+        "xs:restriction": { "_attributes": { "base": "xs:date" }, "xs:minInclusive": { "_attributes": { "value": "1970-01-01" } } }
+      }
+    ],
+    "_comment": "________________ NUMBERS ____________________"
+  }
+}

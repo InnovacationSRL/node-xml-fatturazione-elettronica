@@ -1,0 +1,6 @@
+RT01		ritenuta persone fisiche											
+RT02		ritenuta persone giuridiche											
+RT03		contributo INPS											
+RT04		contributo ENASARCO											
+RT05		contributo ENPAM											
+RT06		altro contributo previdenziale											
