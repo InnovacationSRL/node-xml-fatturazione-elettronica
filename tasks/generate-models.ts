@@ -155,6 +155,7 @@ function generateComplexTypes(schema: Tree) {
     log(x.name, 'CHECKING')
     if (x.kind === "leaf") {
       log(x.name, 'CASE LEAF')
+      
       if (isEmitted(x.type)) {
         log(x.name, 'EMITTING LEAF')
         emit(x)
@@ -168,14 +169,14 @@ function generateComplexTypes(schema: Tree) {
       log(x.name, 'CASE NODE')
       for (const child of x.children) {
         log(child.name, `CHILD OF ${x.name}`)
-        if(isEmitted(child.name)) {
-          log(child.name, 'IS ALREADY EMITTED, SKIPPING')
-          continue;
-        }
-        if (isEmitted(child.type)) {
-          log(child.name, `EMITTING CHILD, BECAUSE ${child.type} IS EMITTED`)
-          emit(child)
-        }
+        // if(isEmitted(child.name)) {
+          //   log(child.name, 'IS ALREADY EMITTED, SKIPPING')
+          //   continue;
+          // }
+        // if (isEmitted(child.type)) {
+        //   log(child.name, `EMITTING CHILD, BECAUSE ${child.type} IS EMITTED`)
+        //   emit(child)
+        // }
         else {
           log(child.type, `RECURRING ON, CHILD OF ${child.name}`)
           recur(child.type)

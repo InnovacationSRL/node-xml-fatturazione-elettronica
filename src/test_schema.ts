@@ -477,6 +477,8 @@ const DatiRicezione = DatiDocumentiCorrelatiType
 type DatiRicezione = z.infer<typeof DatiRicezione>
 const DatiFattureCollegate = DatiDocumentiCorrelatiType
 type DatiFattureCollegate = z.infer<typeof DatiFattureCollegate>
+const DatiSALType = RiferimentoFaseType
+type DatiSALType = z.infer<typeof DatiSALType>
 const DatiSAL = DatiSALType
 type DatiSAL = z.infer<typeof DatiSAL>
 const NumeroDDT = String20Type
@@ -767,5 +769,7 @@ const FatturaElettronicaType = z.object({
   FatturaElettronicaBody: FatturaElettronicaBodyType,
 })
 type FatturaElettronicaType = z.infer<typeof FatturaElettronicaType>
+const RappresentanteFiscaleCessionarioType = IdFiscaleType
+type RappresentanteFiscaleCessionarioType = z.infer<typeof RappresentanteFiscaleCessionarioType>
 const DatiAnagraficiCessionarioType = z.object({ IdFiscaleIVA: IdFiscaleType, CodiceFiscale: CodiceFiscaleType, Anagrafica: AnagraficaType })
 type DatiAnagraficiCessionarioType = z.infer<typeof DatiAnagraficiCessionarioType>
