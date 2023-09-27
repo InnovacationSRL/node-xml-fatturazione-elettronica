@@ -10,22 +10,30 @@ const file = readFileSync("./docs/agenzia-entrate/Schema_VFPR12.xsd", { encoding
 const sheetData = xml.xml2json(file, { compact: true })
 const sheet: any = JSON.parse(sheetData)
 const s = console.log.bind(console)
-function nameOf(x: any) {
+function nameOf(x: any): string {
   return x._attributes.name
 }
-function extract(x: any): any {
+function filterUndefined<T>(array: (T | undefined)[]): T[] {
+  return array.filter(x => x) as T[]
+}
+
+function extract(x: any): Tree | undefined {
   let inner = x["xs:sequence"]?.["xs:element"]
-  let children = Array.isArray(inner)
-    ? { children: inner.map(extract).filter(x => x), kind: "node" }
-    : typeof inner === "object"
-    ? { type: inner._attributes.type, kind: "leaf" }
-    : { type: x._attributes.type, kind: "leaf" }
+  let children = (
+    () => {
+      if(Array.isArray(inner))
+        return { children: filterUndefined(inner.map(extract)), kind: "node" } as const
+      else if(typeof inner === "object")
+        return { type: inner._attributes.type as string, kind: "leaf" } as const
+      else return { type: x._attributes.type as string, kind: "leaf" } as const
+    }
+  )()
   if (!nameOf(x)) return undefined
   return {
     name: nameOf(x),
     ...children,
     // o: x
-  }
+  } as any
 }
 function extractSimple(x: any): Leaf  {
   const xsdType = x[`xs:restriction`]._attributes.base.slice(3)
@@ -63,7 +71,6 @@ function generateSimpleTypes(types: Leaf[]) {
   const generate: (o: Leaf) => string = ({ name, type }) => `const ${name} = ${xsdToZodType(type)};\n${infer(name)}\n`
   return types.map(generate).join("\n")
 }
-let buf = "import { z } from 'zod' \n"
 interface Leaf {
   kind: "leaf"
   name: string
@@ -75,7 +82,8 @@ interface Node {
   children: Leaf[]
 }
 
-type Tree = (Node | Leaf)[]
+type Tree = Node | Leaf
+type Forest = Tree[]
 function generateChildren(children: Leaf[]) {
   if (!children) {
     return []
@@ -85,125 +93,76 @@ function generateChildren(children: Leaf[]) {
 function infer(name: string) {
   return `type ${name} = z.infer<typeof ${name}>`
 }
-// function generateComplexTypes(tree: Tree) {
-//   return tree
-//     .map(level => {
-//       if (level.kind === "node") {
-//         const { name, children } = level
-//         if (!children) s(name)
-//         return `const ${name} = z.object({${generateChildren(children).join(", ")}})\n${infer(name)}\n`
-//       } else {
-//         const { name, type } = level
-//         return `const ${name} = ${xsdToZodType(type)};\n${infer(name)}\n`
-//       }
-//     })
-//     .reverse()
-//     .join("\n")
-// }
 
-// s(generateComplexTypes(complex))
+class SchemaBuilder {
+  emitted = new Set<string>()
+  buffer: string[] = []
+  constructor(private schema: Forest) {
 
-
-function toCode(x: Node | Leaf) {
-  if (x.kind === "node") {
-    const { name, children } = x
-    if (!children) s(name)
-    return `const ${name} = z.object({${generateChildren(children).join(", ")}})\n${infer(name)}\n`
-  } else {
-    const { name, type } = x
-    return `const ${name} = ${xsdToZodType(type)};\n${infer(name)}\n`
+  }
+  findMap(name: string, callback: (tree: Tree, nodeSet: SchemaBuilder) => void) {
+    const found = this.schema.find(node => node.name === name)
+    if(found && this.isNotEmitted(found.name)) {
+      callback(found, this)
+    }  
+  }
+  isNotEmitted = (name: string) => {
+    return !this.emitted.has(name)
+  }
+  private toCode(tree: Tree) {
+    if (tree.kind === "node") {
+      const { name, children } = tree
+      if (!children) s(name)
+      return `const ${name} = z.object({${generateChildren(children).join(", ")}})\n${infer(name)}\n`
+    } else {
+      const { name, type } = tree
+      return `const ${name} = ${xsdToZodType(type)};\n${infer(name)}\n`
+    }
+  }
+  emit(node: Tree) {
+    if(this.isNotEmitted(node.name)) {
+      this.emitted.add(node.name)
+      this.buffer.push(this.toCode(node))
+    }
+  }
+  build() {
+    return this.buffer.join('\n')
   }
 }
-let html = "<html><head><style>tr:nth-child(odd){background-color:#ccc}</style></head><body>";
-function generateComplexTypes(schema: Tree) {
-  let emitted = new Set<string>()
-  let buf = "";
-  html += "<table>"
-  const SIMPLE_NAMES = simple.map(x => x.name)
-  const emit = (x: Node | Leaf) => {
-    log(x.name, 'EMITTING --')
-    if(isEmitted(x.name)) return;
-    if(SIMPLE_NAMES.includes(x.name)) return;
-    log(x.name, 'EMITTING SUCCESS: ')
-    buf += toCode(x)
-    emitted.add(x.name)
-  }
-  
-  function log(name: string, tag: string) {
-    let l = (_:string, _2: string) => {}
-    let col = ""
-    if(isEmitted(name)) {
-      l = c.yellow
-      col = "red"
-    } else {
-      l = c.green
-      col = "green"
-    }
-    s(l(tag, name))
-    html += `<tr style="color:${col}"><td>${name}</td><td>${tag}</td></tr>`
-  }
-  const isEmitted = (name: string) => emitted.has(name) || simple.findIndex(v => v.name === name) !== -1
-  function recur(name: string) {
-    log(name, 'RECUR HAPPENING')
-    const found = schema.find(x => x.name === name)
-    if(found && !isEmitted(found.name)) {
-      log(name, 'RECUR FOUND')
-      checkNode(found)
-    }
-  }
-  function checkNode(x: Node | Leaf) {
-    log(x.name, 'CHECKING')
-    if (x.kind === "leaf") {
-      log(x.name, 'CASE LEAF')
-      
-      if (isEmitted(x.type)) {
-        log(x.name, 'EMITTING LEAF')
-        emit(x)
-      } else {
-        log(x.type, 'RECURRING LEAF ON')
-        recur(x.type)
-        log(x.name, 'EMITTING LEAF')
-        emit(x)
+function checkNode(tree: Tree, builder: SchemaBuilder) {
+  switch(tree.kind) {
+    case "leaf":
+      if (builder.isNotEmitted(tree.type)) {
+        builder.findMap(tree.type, checkNode)
       }
-    } else {
-      log(x.name, 'CASE NODE')
-      for (const child of x.children) {
-        log(child.name, `CHILD OF ${x.name}`)
-        if(isEmitted(child.type)) {
-          log(child.name, 'TYPE IS ALREADY EMITTED, SKIPPING')
-          continue;
-        } else {
-          log(child.type, `RECURRING ON, CHILD OF ${child.name}`)
-          recur(child.type)
+      builder.emit(tree)
+      return;
+    case "node": 
+      for (const child of tree.children) {
+        if(builder.isNotEmitted(child.type)) {
+          builder.findMap(child.type, checkNode)
         }
       }
-      emit(x)
-    }
+      builder.emit(tree)
+      return;
   }
-
-  for (const x of schema) {
-    log(x.name, 'EMITTING TOP LEVEL NODE')
-    checkNode(x)
-  }
-  if(emitted.size !== schema.length) {
-    // console.log('WTF')
-    // console.log('emitted: ', [...emitted].length)
-    // console.log('simple', simple.map(x => x.name))
-    // console.log('schema: ', schema.length)
-  } else {
-    // console.log('emit OK')
-  }
-  html += "</table>"
-  return buf;
 }
 
-buf += generateSimpleTypes(simple)
-buf += "\n"
-html += `<pre style="border: 1px solid red">${buf.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</pre>`
-html += `<pre style="border: 1px solid blue">${JSON.stringify(complex, null, 2)}</pre>`
-buf += generateComplexTypes(complex)
-buf += "\n"
-writeFileSync('log.html', html)
+function generateComplexTypes(schema: Forest) {
+  let builder = new SchemaBuilder(schema)
+  for (const x of schema) {
+    checkNode(x, builder)
+  }
+  return builder.build();
+}
 
-writeFileSync('src/test_schema.ts', buf)
+let simpleTypes = generateSimpleTypes(simple)
+let complexTypes = generateComplexTypes(complex)
+let types = [
+  "import { z } from 'zod'",
+  simpleTypes,
+  complexTypes,
+].join('\n')
+
+writeFileSync('src/test_schema.ts', types)
 prettify('src/test_schema.ts')

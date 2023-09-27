@@ -184,8 +184,10 @@ type DataFatturaType = z.infer<typeof DataFatturaType>
 
 const IdFiscaleType = z.object({ IdPaese: NazioneType, IdCodice: CodiceType })
 type IdFiscaleType = z.infer<typeof IdFiscaleType>
+
 const ContattiTrasmittenteType = z.object({ Telefono: TelFaxType, Email: EmailContattiType })
 type ContattiTrasmittenteType = z.infer<typeof ContattiTrasmittenteType>
+
 const DatiTrasmissioneType = z.object({
   IdTrasmittente: IdFiscaleType,
   ProgressivoInvio: String10Type,
@@ -195,8 +197,10 @@ const DatiTrasmissioneType = z.object({
   PECDestinatario: EmailType,
 })
 type DatiTrasmissioneType = z.infer<typeof DatiTrasmissioneType>
+
 const AnagraficaType = z.object({ Titolo: TitoloType, CodEORI: CodEORIType })
 type AnagraficaType = z.infer<typeof AnagraficaType>
+
 const DatiAnagraficiCedenteType = z.object({
   IdFiscaleIVA: IdFiscaleType,
   CodiceFiscale: CodiceFiscaleType,
@@ -208,6 +212,7 @@ const DatiAnagraficiCedenteType = z.object({
   RegimeFiscale: RegimeFiscaleType,
 })
 type DatiAnagraficiCedenteType = z.infer<typeof DatiAnagraficiCedenteType>
+
 const IndirizzoType = z.object({
   Indirizzo: String60LatinType,
   NumeroCivico: NumeroCivicoType,
@@ -217,6 +222,7 @@ const IndirizzoType = z.object({
   Nazione: NazioneType,
 })
 type IndirizzoType = z.infer<typeof IndirizzoType>
+
 const IscrizioneREAType = z.object({
   Ufficio: ProvinciaType,
   NumeroREA: String20Type,
@@ -225,8 +231,10 @@ const IscrizioneREAType = z.object({
   StatoLiquidazione: StatoLiquidazioneType,
 })
 type IscrizioneREAType = z.infer<typeof IscrizioneREAType>
+
 const ContattiType = z.object({ Telefono: TelFaxType, Fax: TelFaxType, Email: EmailContattiType })
 type ContattiType = z.infer<typeof ContattiType>
+
 const CedentePrestatoreType = z.object({
   DatiAnagrafici: DatiAnagraficiCedenteType,
   Sede: IndirizzoType,
@@ -236,14 +244,19 @@ const CedentePrestatoreType = z.object({
   RiferimentoAmministrazione: String20Type,
 })
 type CedentePrestatoreType = z.infer<typeof CedentePrestatoreType>
+
 const DatiAnagraficiRappresentanteType = z.object({ IdFiscaleIVA: IdFiscaleType, CodiceFiscale: CodiceFiscaleType, Anagrafica: AnagraficaType })
 type DatiAnagraficiRappresentanteType = z.infer<typeof DatiAnagraficiRappresentanteType>
+
 const RappresentanteFiscaleType = DatiAnagraficiRappresentanteType
 type RappresentanteFiscaleType = z.infer<typeof RappresentanteFiscaleType>
+
 const DatiAnagraficiCessionarioType = z.object({ IdFiscaleIVA: IdFiscaleType, CodiceFiscale: CodiceFiscaleType, Anagrafica: AnagraficaType })
 type DatiAnagraficiCessionarioType = z.infer<typeof DatiAnagraficiCessionarioType>
+
 const RappresentanteFiscaleCessionarioType = IdFiscaleType
 type RappresentanteFiscaleCessionarioType = z.infer<typeof RappresentanteFiscaleCessionarioType>
+
 const CessionarioCommittenteType = z.object({
   DatiAnagrafici: DatiAnagraficiCessionarioType,
   Sede: IndirizzoType,
@@ -251,10 +264,13 @@ const CessionarioCommittenteType = z.object({
   RappresentanteFiscale: RappresentanteFiscaleCessionarioType,
 })
 type CessionarioCommittenteType = z.infer<typeof CessionarioCommittenteType>
+
 const DatiAnagraficiTerzoIntermediarioType = z.object({ IdFiscaleIVA: IdFiscaleType, CodiceFiscale: CodiceFiscaleType, Anagrafica: AnagraficaType })
 type DatiAnagraficiTerzoIntermediarioType = z.infer<typeof DatiAnagraficiTerzoIntermediarioType>
+
 const TerzoIntermediarioSoggettoEmittenteType = DatiAnagraficiTerzoIntermediarioType
 type TerzoIntermediarioSoggettoEmittenteType = z.infer<typeof TerzoIntermediarioSoggettoEmittenteType>
+
 const FatturaElettronicaHeaderType = z.object({
   DatiTrasmissione: DatiTrasmissioneType,
   CedentePrestatore: CedentePrestatoreType,
@@ -264,6 +280,7 @@ const FatturaElettronicaHeaderType = z.object({
   SoggettoEmittente: SoggettoEmittenteType,
 })
 type FatturaElettronicaHeaderType = z.infer<typeof FatturaElettronicaHeaderType>
+
 const DatiRitenutaType = z.object({
   TipoRitenuta: TipoRitenutaType,
   ImportoRitenuta: Amount2DecimalType,
@@ -271,8 +288,10 @@ const DatiRitenutaType = z.object({
   CausalePagamento: CausalePagamentoType,
 })
 type DatiRitenutaType = z.infer<typeof DatiRitenutaType>
+
 const DatiBolloType = z.object({ BolloVirtuale: BolloVirtualeType, ImportoBollo: Amount2DecimalType })
 type DatiBolloType = z.infer<typeof DatiBolloType>
+
 const DatiCassaPrevidenzialeType = z.object({
   TipoCassa: TipoCassaType,
   AlCassa: RateType,
@@ -284,8 +303,10 @@ const DatiCassaPrevidenzialeType = z.object({
   RiferimentoAmministrazione: String20Type,
 })
 type DatiCassaPrevidenzialeType = z.infer<typeof DatiCassaPrevidenzialeType>
+
 const ScontoMaggiorazioneType = z.object({ Tipo: TipoScontoMaggiorazioneType, Percentuale: RateType, Importo: Amount8DecimalType })
 type ScontoMaggiorazioneType = z.infer<typeof ScontoMaggiorazioneType>
+
 const DatiGeneraliDocumentoType = z.object({
   TipoDocumento: TipoDocumentoType,
   Divisa: DivisaType,
@@ -301,6 +322,7 @@ const DatiGeneraliDocumentoType = z.object({
   Art73: Art73Type,
 })
 type DatiGeneraliDocumentoType = z.infer<typeof DatiGeneraliDocumentoType>
+
 const DatiDocumentiCorrelatiType = z.object({
   RiferimentoNumeroLinea: RiferimentoNumeroLineaType,
   IdDocumento: String20Type,
@@ -311,10 +333,13 @@ const DatiDocumentiCorrelatiType = z.object({
   CodiceCIG: String15Type,
 })
 type DatiDocumentiCorrelatiType = z.infer<typeof DatiDocumentiCorrelatiType>
+
 const DatiSALType = RiferimentoFaseType
 type DatiSALType = z.infer<typeof DatiSALType>
+
 const DatiDDTType = z.object({ NumeroDDT: String20Type, DataDDT: z.string(), RiferimentoNumeroLinea: RiferimentoNumeroLineaType })
 type DatiDDTType = z.infer<typeof DatiDDTType>
+
 const DatiAnagraficiVettoreType = z.object({
   IdFiscaleIVA: IdFiscaleType,
   CodiceFiscale: CodiceFiscaleType,
@@ -322,6 +347,7 @@ const DatiAnagraficiVettoreType = z.object({
   NumeroLicenzaGuida: String20Type,
 })
 type DatiAnagraficiVettoreType = z.infer<typeof DatiAnagraficiVettoreType>
+
 const DatiTrasportoType = z.object({
   DatiAnagraficiVettore: DatiAnagraficiVettoreType,
   MezzoTrasporto: String80LatinType,
@@ -338,8 +364,10 @@ const DatiTrasportoType = z.object({
   DataOraConsegna: z.string(),
 })
 type DatiTrasportoType = z.infer<typeof DatiTrasportoType>
+
 const FatturaPrincipaleType = z.object({ NumeroFatturaPrincipale: String20Type, DataFatturaPrincipale: z.string() })
 type FatturaPrincipaleType = z.infer<typeof FatturaPrincipaleType>
+
 const DatiGeneraliType = z.object({
   DatiGeneraliDocumento: DatiGeneraliDocumentoType,
   DatiOrdineAcquisto: DatiDocumentiCorrelatiType,
@@ -353,8 +381,10 @@ const DatiGeneraliType = z.object({
   FatturaPrincipale: FatturaPrincipaleType,
 })
 type DatiGeneraliType = z.infer<typeof DatiGeneraliType>
+
 const CodiceArticoloType = z.object({ CodiceTipo: String35Type, CodiceValore: String35LatinExtType })
 type CodiceArticoloType = z.infer<typeof CodiceArticoloType>
+
 const AltriDatiGestionaliType = z.object({
   TipoDato: String10Type,
   RiferimentoTesto: String60LatinType,
@@ -362,6 +392,7 @@ const AltriDatiGestionaliType = z.object({
   RiferimentoData: z.string(),
 })
 type AltriDatiGestionaliType = z.infer<typeof AltriDatiGestionaliType>
+
 const DettaglioLineeType = z.object({
   NumeroLinea: NumeroLineaType,
   TipoCessionePrestazione: TipoCessionePrestazioneType,
@@ -381,6 +412,7 @@ const DettaglioLineeType = z.object({
   AltriDatiGestionali: AltriDatiGestionaliType,
 })
 type DettaglioLineeType = z.infer<typeof DettaglioLineeType>
+
 const DatiRiepilogoType = z.object({
   AliquotaIVA: RateType,
   Natura: NaturaType,
@@ -392,10 +424,13 @@ const DatiRiepilogoType = z.object({
   RiferimentoNormativo: String100LatinType,
 })
 type DatiRiepilogoType = z.infer<typeof DatiRiepilogoType>
+
 const DatiBeniServiziType = z.object({ DettaglioLinee: DettaglioLineeType, DatiRiepilogo: DatiRiepilogoType })
 type DatiBeniServiziType = z.infer<typeof DatiBeniServiziType>
+
 const DatiVeicoliType = z.object({ Data: z.string(), TotalePercorso: String15Type })
 type DatiVeicoliType = z.infer<typeof DatiVeicoliType>
+
 const DettaglioPagamentoType = z.object({
   Beneficiario: String200LatinType,
   ModalitaPagamento: ModalitaPagamentoType,
@@ -420,8 +455,10 @@ const DettaglioPagamentoType = z.object({
   CodicePagamento: String60Type,
 })
 type DettaglioPagamentoType = z.infer<typeof DettaglioPagamentoType>
+
 const DatiPagamentoType = z.object({ CondizioniPagamento: CondizioniPagamentoType, DettaglioPagamento: DettaglioPagamentoType })
 type DatiPagamentoType = z.infer<typeof DatiPagamentoType>
+
 const AllegatiType = z.object({
   NomeAttachment: String60LatinType,
   AlgoritmoCompressione: String10Type,
@@ -430,6 +467,7 @@ const AllegatiType = z.object({
   Attachment: z.string(),
 })
 type AllegatiType = z.infer<typeof AllegatiType>
+
 const FatturaElettronicaBodyType = z.object({
   DatiGenerali: DatiGeneraliType,
   DatiBeniServizi: DatiBeniServiziType,
@@ -438,6 +476,7 @@ const FatturaElettronicaBodyType = z.object({
   Allegati: AllegatiType,
 })
 type FatturaElettronicaBodyType = z.infer<typeof FatturaElettronicaBodyType>
+
 const FatturaElettronicaType = z.object({
   FatturaElettronicaHeader: FatturaElettronicaHeaderType,
   FatturaElettronicaBody: FatturaElettronicaBodyType,
