@@ -91,7 +91,7 @@ function generateChildren(children: Leaf[]) {
   return children.map(({ name, type }) => `${name}: ${xsdToZodType(type)}`)
 }
 function infer(name: string) {
-  return `type ${name} = z.infer<typeof ${name}>`
+  return `export type ${name} = z.infer<typeof ${name}>`
 }
 
 class SchemaBuilder {
@@ -113,10 +113,10 @@ class SchemaBuilder {
     if (tree.kind === "node") {
       const { name, children } = tree
       if (!children) s(name)
-      return `const ${name} = z.object({${generateChildren(children).join(", ")}})\n${infer(name)}\n`
+      return `export const ${name} = z.strictObject({${generateChildren(children).join(", ")}})\n${infer(name)}\n`
     } else {
       const { name, type } = tree
-      return `const ${name} = ${xsdToZodType(type)};\n${infer(name)}\n`
+      return `export const ${name} = ${xsdToZodType(type)};\n${infer(name)}\n`
     }
   }
   emit(node: Tree) {
