@@ -26,7 +26,7 @@ export type TipoDocumentoType = z.infer<typeof TipoDocumentoType>
 const TipoRitenutaType = z.string()
 export type TipoRitenutaType = z.infer<typeof TipoRitenutaType>
 
-const RiferimentoNumeroLineaType = z.number()
+const RiferimentoNumeroLineaType = z.coerce.number()
 export type RiferimentoNumeroLineaType = z.infer<typeof RiferimentoNumeroLineaType>
 
 const SoggettoEmittenteType = z.string()
@@ -143,25 +143,25 @@ export type EmailType = z.infer<typeof EmailType>
 const EmailContattiType = z.string()
 export type EmailContattiType = z.infer<typeof EmailContattiType>
 
-const PesoType = z.number()
+const PesoType = z.coerce.number()
 export type PesoType = z.infer<typeof PesoType>
 
-const Amount8DecimalType = z.number()
+const Amount8DecimalType = z.coerce.number()
 export type Amount8DecimalType = z.infer<typeof Amount8DecimalType>
 
-const Amount2DecimalType = z.number()
+const Amount2DecimalType = z.coerce.number()
 export type Amount2DecimalType = z.infer<typeof Amount2DecimalType>
 
-const RateType = z.number()
+const RateType = z.coerce.number()
 export type RateType = z.infer<typeof RateType>
 
-const RiferimentoFaseType = z.number()
+const RiferimentoFaseType = z.coerce.number()
 export type RiferimentoFaseType = z.infer<typeof RiferimentoFaseType>
 
-const NumeroColliType = z.number()
+const NumeroColliType = z.coerce.number()
 export type NumeroColliType = z.infer<typeof NumeroColliType>
 
-const NumeroLineaType = z.number()
+const NumeroLineaType = z.coerce.number()
 export type NumeroLineaType = z.infer<typeof NumeroLineaType>
 
 const CAPType = z.string()
@@ -173,10 +173,10 @@ export type ABIType = z.infer<typeof ABIType>
 const CABType = z.string()
 export type CABType = z.infer<typeof CABType>
 
-const GiorniTerminePagamentoType = z.number()
+const GiorniTerminePagamentoType = z.coerce.number()
 export type GiorniTerminePagamentoType = z.infer<typeof GiorniTerminePagamentoType>
 
-const QuantitaType = z.number()
+const QuantitaType = z.coerce.number()
 export type QuantitaType = z.infer<typeof QuantitaType>
 
 const DataFatturaType = z.string()
@@ -208,7 +208,7 @@ export const DatiAnagraficiCedenteType = z.strictObject({
   AlboProfessionale: String60LatinType,
   ProvinciaAlbo: ProvinciaType,
   NumeroIscrizioneAlbo: String60Type,
-  DataIscrizioneAlbo: z.string(),
+  DataIscrizioneAlbo: z.string().optional(),
   RegimeFiscale: RegimeFiscaleType,
 })
 export type DatiAnagraficiCedenteType = z.infer<typeof DatiAnagraficiCedenteType>
@@ -338,7 +338,7 @@ export type DatiGeneraliDocumentoType = z.infer<typeof DatiGeneraliDocumentoType
 export const DatiDocumentiCorrelatiType = z.strictObject({
   RiferimentoNumeroLinea: RiferimentoNumeroLineaType,
   IdDocumento: String20Type,
-  Data: z.string(),
+  Data: z.string().optional(),
   NumItem: String20Type,
   CodiceCommessaConvenzione: String100LatinType,
   CodiceCUP: String15Type,
@@ -369,11 +369,11 @@ export const DatiTrasportoType = z.strictObject({
   UnitaMisuraPeso: String10Type,
   PesoLordo: PesoType,
   PesoNetto: PesoType,
-  DataOraRitiro: z.string(),
-  DataInizioTrasporto: z.string(),
+  DataOraRitiro: z.string().optional(),
+  DataInizioTrasporto: z.string().optional(),
   TipoResa: TipoResaType,
   IndirizzoResa: IndirizzoType,
-  DataOraConsegna: z.string(),
+  DataOraConsegna: z.string().optional(),
 })
 export type DatiTrasportoType = z.infer<typeof DatiTrasportoType>
 
@@ -401,7 +401,7 @@ export const AltriDatiGestionaliType = z.strictObject({
   TipoDato: String10Type,
   RiferimentoTesto: String60LatinType,
   RiferimentoNumero: Amount8DecimalType,
-  RiferimentoData: z.string(),
+  RiferimentoData: z.string().optional(),
 })
 export type AltriDatiGestionaliType = z.infer<typeof AltriDatiGestionaliType>
 
@@ -412,8 +412,8 @@ export const DettaglioLineeType = z.strictObject({
   Descrizione: String1000LatinType,
   Quantita: QuantitaType,
   UnitaMisura: String10Type,
-  DataInizioPeriodo: z.string(),
-  DataFinePeriodo: z.string(),
+  DataInizioPeriodo: z.string().optional(),
+  DataFinePeriodo: z.string().optional(),
   PrezzoUnitario: Amount8DecimalType,
   ScontoMaggiorazione: ScontoMaggiorazioneType,
   PrezzoTotale: Amount8DecimalType,
@@ -446,9 +446,9 @@ export type DatiVeicoliType = z.infer<typeof DatiVeicoliType>
 export const DettaglioPagamentoType = z.strictObject({
   Beneficiario: String200LatinType,
   ModalitaPagamento: ModalitaPagamentoType,
-  DataRiferimentoTerminiPagamento: z.string(),
+  DataRiferimentoTerminiPagamento: z.string().optional(),
   GiorniTerminiPagamento: GiorniTerminePagamentoType,
-  DataScadenzaPagamento: z.string(),
+  DataScadenzaPagamento: z.string().optional(),
   ImportoPagamento: Amount2DecimalType,
   CodUfficioPostale: String20Type,
   CognomeQuietanzante: String60LatinType,
@@ -461,9 +461,9 @@ export const DettaglioPagamentoType = z.strictObject({
   CAB: CABType,
   BIC: BICType,
   ScontoPagamentoAnticipato: Amount2DecimalType,
-  DataLimitePagamentoAnticipato: z.string(),
+  DataLimitePagamentoAnticipato: z.string().optional(),
   PenalitaPagamentiRitardati: Amount2DecimalType,
-  DataDecorrenzaPenale: z.string(),
+  DataDecorrenzaPenale: z.string().optional(),
   CodicePagamento: String60Type,
 })
 export type DettaglioPagamentoType = z.infer<typeof DettaglioPagamentoType>

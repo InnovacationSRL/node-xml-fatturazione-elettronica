@@ -1,5 +1,6 @@
 import * as schema from "~/test_schema"
-import { SafeParseReturnType } from "zod"
+import { SafeParseReturnType, ZodError } from "zod"
+import * as xml from "xml-js"
 
 // export function parse(data: unknown): schema.FatturaElettronicaType {
 //   return schema.FatturaElettronicaType.parse(data)
@@ -8,15 +9,52 @@ import { SafeParseReturnType } from "zod"
 // export function safeParse(data: unknown): SafeParseReturnType<unknown, schema.FatturaElettronicaType> {
 //   return schema.FatturaElettronicaType.safeParse(data) 
 // }
+export type ValidationError = {
+  origin: 'zod',
+  error: ZodError<unknown>
+}
+export interface Ok {
+  success: true
+  invoice: schema.FatturaElettronicaType
+}
+export interface Error {
+  success: false
+  error: ValidationError
+}
+type InvoiceResult = Ok | Error
+function fromZodError(error: ZodError<unknown>): ValidationError {
+  return {
+    origin: 'zod',
+    error
+  }
+}
+export function parse(data: unknown): InvoiceResult {
+  const result = schema.FatturaElettronicaType.safeParse(data)
+  if(result.success) {
+    return {
+      success: true,
+      invoice: result.data
+    }
+  } else { 
+    return {
+      success: false, 
+      error: fromZodError(result.error)
+    }
+  }
+}
+export function toXML(invoice: schema.FatturaElettronicaType): string {
+  return xml.js2xml(invoice)
+}
+export function fromXML(data: string): InvoiceResult {
+  const xmlObj: any = xml.xml2js(data, {compact: true})
+  const invoice = parse(xmlObj["ns2:FatturaElettronica"])
+  return invoice
+}
 
-export declare function parse(data: unknown): schema.FatturaElettronicaType
-export declare function safeParse(data: unknown): SafeParseReturnType<unknown, schema.FatturaElettronicaType>
+export function validateXML(xml: string): ValidationError | null {
+  return null
+}
 
-export declare function toXML(invoice: schema.FatturaElettronicaType): string
-export declare function fromXML(data: string): schema.FatturaElettronicaType
-export declare function safeFromXML(data: string): SafeParseReturnType<unknown, schema.FatturaElettronicaType>
-
-export declare type ValidationError = never //TBD
-export declare function validateXML(xml: string): ValidationError
-export declare function validateInvoice(invoice: schema.FatturaElettronicaType): ValidationError
-
+export default {
+  parse, toXML, fromXML, validateXML
+}

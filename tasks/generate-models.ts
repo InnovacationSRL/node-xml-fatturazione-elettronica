@@ -6,6 +6,7 @@ import z from "zod"
 import { type } from "os"
 import { prettify } from "./utils"
 import c from 'cli-color'
+import { match, P } from "ts-pattern"
 const file = readFileSync("./docs/agenzia-entrate/Schema_VFPR12.xsd", { encoding: "utf8" })
 const sheetData = xml.xml2json(file, { compact: true })
 const sheet: any = JSON.parse(sheetData)
@@ -16,22 +17,36 @@ function nameOf(x: any): string {
 function filterUndefined<T>(array: (T | undefined)[]): T[] {
   return array.filter(x => x) as T[]
 }
-
+function brr(...params: any[]) {
+  console.log(params)
+}
 function extract(x: any): Tree | undefined {
   let inner = x["xs:sequence"]?.["xs:element"]
-  let children = (
-    () => {
+  if(x._attributes.name?.includes("Anagrafica")) {
+    console.log()
+  }
+  let extractChildren = 
+    (inner: any) => {
       if(Array.isArray(inner))
         return { children: filterUndefined(inner.map(extract)), kind: "node" } as const
       else if(typeof inner === "object")
         return { type: inner._attributes.type as string, kind: "leaf" } as const
       else return { type: x._attributes.type as string, kind: "leaf" } as const
     }
-  )()
+  const children = extractChildren(inner)
+  let choices = x["xs:sequence"]?.["xs:choice"]?.["xs:sequence"]
+  if(choices) {
+    choices = choices.map((choice: any) => choice["xs:element"]).map(extractChildren)
+  } 
+  if(choices) {
+    brr(choices)
+  }
   if (!nameOf(x)) return undefined
   return {
     name: nameOf(x),
     ...children,
+    choices,
+    optional: x._attributes.minOccurs === "0"
     // o: x
   } as any
 }
@@ -40,17 +55,18 @@ function extractSimple(x: any): Leaf  {
   return {
     name: nameOf(x),
     type: xsdType,
+    optional: false,
     kind: 'leaf'
   }
 }
 
-function xsdToZodType(type: string) {
+function xsdToZodType(type: string, optional: boolean) {
   if (type.startsWith("xs:")) type = type.slice(3)
   function inner() {
     switch (type) {
       case "decimal":
       case "integer":
-        return "number"
+        return "coerce.number"
       case "date":
       case "string":
       case "normalizedString":
@@ -63,32 +79,37 @@ function xsdToZodType(type: string) {
     }
   }
   let v = inner()
-  return v ? `z.${v}()` : type
+  return v ? `z.${v}()${optional ? '.optional()' : ''}` : type
 }
 let complex = sheet[`xs:schema`][`xs:complexType`].map(extract)
 let simple: Leaf[] = sheet[`xs:schema`][`xs:simpleType`].map(extractSimple) //.map(_.property('type'))
 function generateSimpleTypes(types: Leaf[]) {
-  const generate: (o: Leaf) => string = ({ name, type }) => `const ${name} = ${xsdToZodType(type)};\n${infer(name)}\n`
+  const generate: (o: Leaf) => string = ({ name, type, optional }) => `const ${name} = ${xsdToZodType(type, optional)};\n${infer(name)}\n`
   return types.map(generate).join("\n")
 }
 interface Leaf {
   kind: "leaf"
   name: string
   type: string
+  optional: boolean
 }
 interface Node {
   kind: "node"
   name: string
   children: Leaf[]
+  choices?: Tree[]
+  optional: boolean
 }
 
-type Tree = Node | Leaf
+type Tree = (Node | Leaf)
 type Forest = Tree[]
-function generateChildren(children: Leaf[]) {
+function generateChildren(children: Leaf[], choices?: Tree[]) {
   if (!children) {
     return []
   }
-  return children.map(({ name, type }) => `${name}: ${xsdToZodType(type)}`)
+  let childPortion = children.map(({ name, type, optional }) => `${name}: ${xsdToZodType(type, optional)}`)
+
+  return childPortion;
 }
 function infer(name: string) {
   return `export type ${name} = z.infer<typeof ${name}>`
@@ -109,14 +130,33 @@ class SchemaBuilder {
   isNotEmitted = (name: string) => {
     return !this.emitted.has(name)
   }
+  // private getUnionCases(choices: Tree[]) {
+  //   return choices.map(choice => 
+  //     match(choice)
+  //       .with({ kind: 'leaf' }, leaf => leaf.type)
+  //       .with({ kind: 'node', children: P.select() }, children => 
+  //         ``
+  //       )
+  //       .exhaustive()
+  //   )
+  // }
   private toCode(tree: Tree) {
     if (tree.kind === "node") {
-      const { name, children } = tree
+      const { name, children, choices } = tree
       if (!children) s(name)
-      return `export const ${name} = z.strictObject({${generateChildren(children).join(", ")}})\n${infer(name)}\n`
+      const childrenSection = `z.strictObject({${generateChildren(children, choices).join(", ")}})`
+      let body = "";
+      if(choices) {
+        const unionCases: any[] = []//getUnionCases(choices)
+        const unionSection = `z.union([${unionCases.join(', ')}])`
+        body = `z.intersection(${childrenSection}, ${unionSection})`
+      } else {
+        body = childrenSection
+      }
+      return `export const ${name} = ${body}\n${infer(name)}\n`
     } else {
-      const { name, type } = tree
-      return `export const ${name} = ${xsdToZodType(type)};\n${infer(name)}\n`
+      const { name, type, optional } = tree
+      return `export const ${name} = ${xsdToZodType(type, optional)};\n${infer(name)}\n`
     }
   }
   emit(node: Tree) {
