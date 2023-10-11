@@ -198,7 +198,10 @@ export const DatiTrasmissioneType = z.strictObject({
 })
 export type DatiTrasmissioneType = z.infer<typeof DatiTrasmissioneType>
 
-export const AnagraficaType = z.strictObject({ Titolo: TitoloType, CodEORI: CodEORIType })
+export const AnagraficaType = z.intersection(
+  z.strictObject({ Titolo: TitoloType, CodEORI: CodEORIType }),
+  z.union([z.strictObject({ Denominazione: String80LatinType }), z.strictObject({ Nome: String60LatinType, Cognome: String60LatinType })]),
+)
 export type AnagraficaType = z.infer<typeof AnagraficaType>
 
 export const DatiAnagraficiCedenteType = z.strictObject({

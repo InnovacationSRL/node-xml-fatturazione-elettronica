@@ -20,28 +20,43 @@ function filterUndefined<T>(array: (T | undefined)[]): T[] {
 function brr(...params: any[]) {
   console.log(params)
 }
+
+function extractChoices(choices: any) {
+  const elements: any[] = choices["xs:sequence"]
+  const cases = elements
+    .map(element =>
+      match(element["xs:element"])
+        .with({ _attributes: { name: P.string.select("name"), type: P.string.select("type") } }, s => [s])
+        .with(P.array(
+          { _attributes: P.select({ name: P.string, type: P.string }) }
+        ), s => s)
+        .run()
+    )
+  return cases
+}
 function extract(x: any): Tree | undefined {
   let inner = x["xs:sequence"]?.["xs:element"]
-  if(x._attributes.name?.includes("Anagrafica")) {
+  if (x._attributes.name?.includes("Anagrafica")) {
     console.log()
   }
-  let extractChildren = 
+  let extractChildren =
     (inner: any) => {
-      if(Array.isArray(inner))
+      if (Array.isArray(inner))
         return { children: filterUndefined(inner.map(extract)), kind: "node" } as const
-      else if(typeof inner === "object")
+      else if (typeof inner === "object")
         return { type: inner._attributes.type as string, kind: "leaf" } as const
       else return { type: x._attributes.type as string, kind: "leaf" } as const
     }
   const children = extractChildren(inner)
-  let choices = x["xs:sequence"]?.["xs:choice"]?.["xs:sequence"]
-  if(choices) {
-    choices = choices.map((choice: any) => choice["xs:element"]).map(extractChildren)
-  } 
-  if(choices) {
+  let choices = x["xs:sequence"]?.["xs:choice"]
+  if (choices) {
+    choices = extractChoices(choices)
+  }
+  if (choices) {
     brr(choices)
   }
   if (!nameOf(x)) return undefined
+  console.log(nameOf(x), x._attributes.minOccurs)
   return {
     name: nameOf(x),
     ...children,
@@ -50,7 +65,7 @@ function extract(x: any): Tree | undefined {
     // o: x
   } as any
 }
-function extractSimple(x: any): Leaf  {
+function extractSimple(x: any): Leaf {
   const xsdType = x[`xs:restriction`]._attributes.base.slice(3)
   return {
     name: nameOf(x),
@@ -97,13 +112,13 @@ interface Node {
   kind: "node"
   name: string
   children: Leaf[]
-  choices?: Tree[]
+  choices?: {name: string, type: string}[][]
   optional: boolean
 }
 
 type Tree = (Node | Leaf)
 type Forest = Tree[]
-function generateChildren(children: Leaf[], choices?: Tree[]) {
+function generateChildren(children: Leaf[]) {
   if (!children) {
     return []
   }
@@ -123,9 +138,9 @@ class SchemaBuilder {
   }
   findMap(name: string, callback: (tree: Tree, nodeSet: SchemaBuilder) => void) {
     const found = this.schema.find(node => node.name === name)
-    if(found && this.isNotEmitted(found.name)) {
+    if (found && this.isNotEmitted(found.name)) {
       callback(found, this)
-    }  
+    }
   }
   isNotEmitted = (name: string) => {
     return !this.emitted.has(name)
@@ -140,14 +155,20 @@ class SchemaBuilder {
   //       .exhaustive()
   //   )
   // }
+  private getUnionCases(cases: {name: string, type: string}[][]) {
+    return cases.map(unionCase => {
+      const fields = unionCase.map(({name, type}) => `${name}: ${type}`)
+      return `z.strictObject({${fields.join(', ')}})`
+    })  
+  }
   private toCode(tree: Tree) {
     if (tree.kind === "node") {
       const { name, children, choices } = tree
       if (!children) s(name)
-      const childrenSection = `z.strictObject({${generateChildren(children, choices).join(", ")}})`
+      const childrenSection = `z.strictObject({${generateChildren(children).join(", ")}})`
       let body = "";
-      if(choices) {
-        const unionCases: any[] = []//getUnionCases(choices)
+      if (choices) {
+        const unionCases: any[] = this.getUnionCases(choices)
         const unionSection = `z.union([${unionCases.join(', ')}])`
         body = `z.intersection(${childrenSection}, ${unionSection})`
       } else {
@@ -160,7 +181,7 @@ class SchemaBuilder {
     }
   }
   emit(node: Tree) {
-    if(this.isNotEmitted(node.name)) {
+    if (this.isNotEmitted(node.name)) {
       this.emitted.add(node.name)
       this.buffer.push(this.toCode(node))
     }
@@ -170,16 +191,16 @@ class SchemaBuilder {
   }
 }
 function checkNode(tree: Tree, builder: SchemaBuilder) {
-  switch(tree.kind) {
+  switch (tree.kind) {
     case "leaf":
       if (builder.isNotEmitted(tree.type)) {
         builder.findMap(tree.type, checkNode)
       }
       builder.emit(tree)
       return;
-    case "node": 
+    case "node":
       for (const child of tree.children) {
-        if(builder.isNotEmitted(child.type)) {
+        if (builder.isNotEmitted(child.type)) {
           builder.findMap(child.type, checkNode)
         }
       }
