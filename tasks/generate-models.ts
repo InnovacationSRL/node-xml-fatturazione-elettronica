@@ -1,16 +1,13 @@
 import { readFileSync, writeFileSync } from "fs"
 import xml from "xml-js"
-// import { prettify } from './utils';
 import _ from "lodash"
-import z from "zod"
-import { type } from "os"
 import { prettify } from "./utils"
-import c from 'cli-color'
 import { match, P } from "ts-pattern"
 const file = readFileSync("./docs/agenzia-entrate/Schema_VFPR12.xsd", { encoding: "utf8" })
 const sheetData = xml.xml2json(file, { compact: true })
 const sheet: any = JSON.parse(sheetData)
 const s = console.log.bind(console)
+
 function nameOf(x: any): string {
   return x._attributes.name
 }
@@ -44,26 +41,27 @@ function extract(x: any): Tree | undefined {
       if (Array.isArray(inner))
         return { children: filterUndefined(inner.map(extract)), kind: "node" } as const
       else if (typeof inner === "object")
-        return { type: inner._attributes.type as string, kind: "leaf" } as const
+        return { children: [extract(inner)], kind: "node" } as const
       else return { type: x._attributes.type as string, kind: "leaf" } as const
     }
   const children = extractChildren(inner)
-  let choices = x["xs:sequence"]?.["xs:choice"]
+  let choices = x["xs:sequence"]?.["xs:choice"] 
   if (choices) {
     choices = extractChoices(choices)
   }
-  if (choices) {
-    brr(choices)
-  }
   if (!nameOf(x)) return undefined
-  console.log(nameOf(x), x._attributes.minOccurs)
-  return {
+  const ret =  {
     name: nameOf(x),
     ...children,
     choices,
-    optional: x._attributes.minOccurs === "0"
+    optional: x._attributes.minOccurs === "0",
+    multiple: x._attributes.maxOccurs === "unbounded",
     // o: x
   } as any
+  if(ret.name.includes("TerzoIntermediarioSoggettoEmittenteType")) {
+    console.log('break')
+  }
+  return ret 
 }
 function extractSimple(x: any): Leaf {
   const xsdType = x[`xs:restriction`]._attributes.base.slice(3)
@@ -71,11 +69,12 @@ function extractSimple(x: any): Leaf {
     name: nameOf(x),
     type: xsdType,
     optional: false,
+    multiple: false,
     kind: 'leaf'
   }
 }
 
-function xsdToZodType(type: string, optional: boolean) {
+function xsdToZodType(type: string, optional: boolean, multiple: boolean) {
   if (type.startsWith("xs:")) type = type.slice(3)
   function inner() {
     switch (type) {
@@ -94,12 +93,18 @@ function xsdToZodType(type: string, optional: boolean) {
     }
   }
   let v = inner()
-  return v ? `z.${v}()${optional ? '.optional()' : ''}` : type
+  const ret = v ? `z.${v}()` : type 
+  return match([multiple, optional])
+    .with([true, true], () => ret + `.array().optional().or(${ret}.optional())`)
+    .with([true, false], () => ret + `.array().or(${ret})`)
+    .with([false, true], () => ret + `.optional()`)
+    .with([false, false], () => ret)
+    .exhaustive()
 }
 let complex = sheet[`xs:schema`][`xs:complexType`].map(extract)
 let simple: Leaf[] = sheet[`xs:schema`][`xs:simpleType`].map(extractSimple) //.map(_.property('type'))
 function generateSimpleTypes(types: Leaf[]) {
-  const generate: (o: Leaf) => string = ({ name, type, optional }) => `const ${name} = ${xsdToZodType(type, optional)};\n${infer(name)}\n`
+  const generate: (o: Leaf) => string = ({ name, type, optional, multiple }) => `const ${name} = ${xsdToZodType(type, optional, multiple)};\n${infer(name)}\n`
   return types.map(generate).join("\n")
 }
 interface Leaf {
@@ -107,6 +112,7 @@ interface Leaf {
   name: string
   type: string
   optional: boolean
+  multiple: boolean
 }
 interface Node {
   kind: "node"
@@ -114,6 +120,7 @@ interface Node {
   children: Leaf[]
   choices?: {name: string, type: string}[][]
   optional: boolean
+  multiple: boolean
 }
 
 type Tree = (Node | Leaf)
@@ -122,7 +129,7 @@ function generateChildren(children: Leaf[]) {
   if (!children) {
     return []
   }
-  let childPortion = children.map(({ name, type, optional }) => `${name}: ${xsdToZodType(type, optional)}`)
+  let childPortion = children.map(({ name, type, optional, multiple }) => `${name}: ${xsdToZodType(type, optional, multiple)}`)
 
   return childPortion;
 }
@@ -145,39 +152,34 @@ class SchemaBuilder {
   isNotEmitted = (name: string) => {
     return !this.emitted.has(name)
   }
-  // private getUnionCases(choices: Tree[]) {
-  //   return choices.map(choice => 
-  //     match(choice)
-  //       .with({ kind: 'leaf' }, leaf => leaf.type)
-  //       .with({ kind: 'node', children: P.select() }, children => 
-  //         ``
-  //       )
-  //       .exhaustive()
-  //   )
-  // }
   private getUnionCases(cases: {name: string, type: string}[][]) {
     return cases.map(unionCase => {
       const fields = unionCase.map(({name, type}) => `${name}: ${type}`)
-      return `z.strictObject({${fields.join(', ')}})`
+      return `{${fields.join(', ')}}`
     })  
   }
   private toCode(tree: Tree) {
     if (tree.kind === "node") {
-      const { name, children, choices } = tree
+      const { name, children, choices, multiple } = tree
       if (!children) s(name)
+      
       const childrenSection = `z.strictObject({${generateChildren(children).join(", ")}})`
       let body = "";
       if (choices) {
-        const unionCases: any[] = this.getUnionCases(choices)
-        const unionSection = `z.union([${unionCases.join(', ')}])`
-        body = `z.intersection(${childrenSection}, ${unionSection})`
+        const unionCases: any[] = 
+          this.getUnionCases(choices)
+            .map(branch => `${childrenSection}.augment(${branch})`)
+        body = `z.union([${unionCases.join(', ')}])`
       } else {
         body = childrenSection
       }
+      if(multiple) {
+        body += ".array()"
+      }
       return `export const ${name} = ${body}\n${infer(name)}\n`
     } else {
-      const { name, type, optional } = tree
-      return `export const ${name} = ${xsdToZodType(type, optional)};\n${infer(name)}\n`
+      const { name, type, optional, multiple } = tree
+      return `export const ${name} = ${xsdToZodType(type, optional, multiple)};\n${infer(name)}\n`
     }
   }
   emit(node: Tree) {
@@ -209,6 +211,7 @@ function checkNode(tree: Tree, builder: SchemaBuilder) {
   }
 }
 
+
 function generateComplexTypes(schema: Forest) {
   let builder = new SchemaBuilder(schema)
   for (const x of schema) {
@@ -224,6 +227,7 @@ let types = [
   simpleTypes,
   complexTypes,
 ].join('\n')
+
 
 writeFileSync('src/test_schema.ts', types)
 prettify('src/test_schema.ts')

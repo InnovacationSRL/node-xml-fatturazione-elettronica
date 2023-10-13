@@ -1,6 +1,7 @@
 import * as schema from "~/test_schema"
 import { SafeParseReturnType, ZodError } from "zod"
 import * as xml from "xml-js"
+import { P, match } from "ts-pattern"
 
 // export function parse(data: unknown): schema.FatturaElettronicaType {
 //   return schema.FatturaElettronicaType.parse(data)
@@ -45,10 +46,36 @@ export function parse(data: unknown): InvoiceResult {
 export function toXML(invoice: schema.FatturaElettronicaType): string {
   return xml.js2xml(invoice)
 }
+function removeText(object: any) {
+  if(typeof object === "object") {
+    const keys = Object.keys(object);
+    for(const key of keys) {
+      match(object[key])
+        .with({ _text: P.string.select() }, text => {
+          object[key] = text
+        })
+        .otherwise(() => removeText(object[key]))
+        
+      const innerKeys = Object.keys(object[key])
+      if(innerKeys.length === 1 && innerKeys[0] === "_text") {
+        object[key] = object[key]._text;
+      } else {
+        removeText(object[key])
+      }
+    }
+  }
+}
 export function fromXML(data: string): InvoiceResult {
   const xmlObj: any = xml.xml2js(data, {compact: true})
-  const invoice = parse(xmlObj["ns2:FatturaElettronica"])
-  return invoice
+  const v = xmlObj["ns3:FatturaElettronica"]
+  removeText(v)
+  if(v["ds:Signature"]) {
+    delete v["ds:Signature"]
+  }
+  if(v._attributes) {
+    delete v._attributes
+  }
+  return parse(v)
 }
 
 export function validateXML(xml: string): ValidationError | null {

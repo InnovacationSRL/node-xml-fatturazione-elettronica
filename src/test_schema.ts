@@ -185,7 +185,7 @@ export type DataFatturaType = z.infer<typeof DataFatturaType>
 export const IdFiscaleType = z.strictObject({ IdPaese: NazioneType, IdCodice: CodiceType })
 export type IdFiscaleType = z.infer<typeof IdFiscaleType>
 
-export const ContattiTrasmittenteType = z.strictObject({ Telefono: TelFaxType, Email: EmailContattiType })
+export const ContattiTrasmittenteType = z.strictObject({ Telefono: TelFaxType.optional(), Email: EmailContattiType.optional() })
 export type ContattiTrasmittenteType = z.infer<typeof ContattiTrasmittenteType>
 
 export const DatiTrasmissioneType = z.strictObject({
@@ -193,24 +193,24 @@ export const DatiTrasmissioneType = z.strictObject({
   ProgressivoInvio: String10Type,
   FormatoTrasmissione: FormatoTrasmissioneType,
   CodiceDestinatario: CodiceDestinatarioType,
-  ContattiTrasmittente: ContattiTrasmittenteType,
-  PECDestinatario: EmailType,
+  ContattiTrasmittente: ContattiTrasmittenteType.optional(),
+  PECDestinatario: EmailType.optional(),
 })
 export type DatiTrasmissioneType = z.infer<typeof DatiTrasmissioneType>
 
-export const AnagraficaType = z.intersection(
-  z.strictObject({ Titolo: TitoloType, CodEORI: CodEORIType }),
-  z.union([z.strictObject({ Denominazione: String80LatinType }), z.strictObject({ Nome: String60LatinType, Cognome: String60LatinType })]),
-)
+export const AnagraficaType = z.union([
+  z.strictObject({ Titolo: TitoloType.optional(), CodEORI: CodEORIType.optional() }).augment({ Denominazione: String80LatinType }),
+  z.strictObject({ Titolo: TitoloType.optional(), CodEORI: CodEORIType.optional() }).augment({ Nome: String60LatinType, Cognome: String60LatinType }),
+])
 export type AnagraficaType = z.infer<typeof AnagraficaType>
 
 export const DatiAnagraficiCedenteType = z.strictObject({
   IdFiscaleIVA: IdFiscaleType,
-  CodiceFiscale: CodiceFiscaleType,
+  CodiceFiscale: CodiceFiscaleType.optional(),
   Anagrafica: AnagraficaType,
-  AlboProfessionale: String60LatinType,
-  ProvinciaAlbo: ProvinciaType,
-  NumeroIscrizioneAlbo: String60Type,
+  AlboProfessionale: String60LatinType.optional(),
+  ProvinciaAlbo: ProvinciaType.optional(),
+  NumeroIscrizioneAlbo: String60Type.optional(),
   DataIscrizioneAlbo: z.string().optional(),
   RegimeFiscale: RegimeFiscaleType,
 })
@@ -218,10 +218,10 @@ export type DatiAnagraficiCedenteType = z.infer<typeof DatiAnagraficiCedenteType
 
 export const IndirizzoType = z.strictObject({
   Indirizzo: String60LatinType,
-  NumeroCivico: NumeroCivicoType,
+  NumeroCivico: NumeroCivicoType.optional(),
   CAP: CAPType,
   Comune: String60LatinType,
-  Provincia: ProvinciaType,
+  Provincia: ProvinciaType.optional(),
   Nazione: NazioneType,
 })
 export type IndirizzoType = z.infer<typeof IndirizzoType>
@@ -229,70 +229,73 @@ export type IndirizzoType = z.infer<typeof IndirizzoType>
 export const IscrizioneREAType = z.strictObject({
   Ufficio: ProvinciaType,
   NumeroREA: String20Type,
-  CapitaleSociale: Amount2DecimalType,
-  SocioUnico: SocioUnicoType,
+  CapitaleSociale: Amount2DecimalType.optional(),
+  SocioUnico: SocioUnicoType.optional(),
   StatoLiquidazione: StatoLiquidazioneType,
 })
 export type IscrizioneREAType = z.infer<typeof IscrizioneREAType>
 
-export const ContattiType = z.strictObject({ Telefono: TelFaxType, Fax: TelFaxType, Email: EmailContattiType })
+export const ContattiType = z.strictObject({ Telefono: TelFaxType.optional(), Fax: TelFaxType.optional(), Email: EmailContattiType.optional() })
 export type ContattiType = z.infer<typeof ContattiType>
 
 export const CedentePrestatoreType = z.strictObject({
   DatiAnagrafici: DatiAnagraficiCedenteType,
   Sede: IndirizzoType,
-  StabileOrganizzazione: IndirizzoType,
-  IscrizioneREA: IscrizioneREAType,
-  Contatti: ContattiType,
-  RiferimentoAmministrazione: String20Type,
+  StabileOrganizzazione: IndirizzoType.optional(),
+  IscrizioneREA: IscrizioneREAType.optional(),
+  Contatti: ContattiType.optional(),
+  RiferimentoAmministrazione: String20Type.optional(),
 })
 export type CedentePrestatoreType = z.infer<typeof CedentePrestatoreType>
 
 export const DatiAnagraficiRappresentanteType = z.strictObject({
   IdFiscaleIVA: IdFiscaleType,
-  CodiceFiscale: CodiceFiscaleType,
+  CodiceFiscale: CodiceFiscaleType.optional(),
   Anagrafica: AnagraficaType,
 })
 export type DatiAnagraficiRappresentanteType = z.infer<typeof DatiAnagraficiRappresentanteType>
 
-export const RappresentanteFiscaleType = DatiAnagraficiRappresentanteType
+export const RappresentanteFiscaleType = z.strictObject({ DatiAnagrafici: DatiAnagraficiRappresentanteType })
 export type RappresentanteFiscaleType = z.infer<typeof RappresentanteFiscaleType>
 
 export const DatiAnagraficiCessionarioType = z.strictObject({
-  IdFiscaleIVA: IdFiscaleType,
-  CodiceFiscale: CodiceFiscaleType,
+  IdFiscaleIVA: IdFiscaleType.optional(),
+  CodiceFiscale: CodiceFiscaleType.optional(),
   Anagrafica: AnagraficaType,
 })
 export type DatiAnagraficiCessionarioType = z.infer<typeof DatiAnagraficiCessionarioType>
 
-export const RappresentanteFiscaleCessionarioType = IdFiscaleType
+export const RappresentanteFiscaleCessionarioType = z.union([
+  z.strictObject({ IdFiscaleIVA: IdFiscaleType }).augment({ Denominazione: String80LatinType }),
+  z.strictObject({ IdFiscaleIVA: IdFiscaleType }).augment({ Nome: String60LatinType, Cognome: String60LatinType }),
+])
 export type RappresentanteFiscaleCessionarioType = z.infer<typeof RappresentanteFiscaleCessionarioType>
 
 export const CessionarioCommittenteType = z.strictObject({
   DatiAnagrafici: DatiAnagraficiCessionarioType,
   Sede: IndirizzoType,
-  StabileOrganizzazione: IndirizzoType,
-  RappresentanteFiscale: RappresentanteFiscaleCessionarioType,
+  StabileOrganizzazione: IndirizzoType.optional(),
+  RappresentanteFiscale: RappresentanteFiscaleCessionarioType.optional(),
 })
 export type CessionarioCommittenteType = z.infer<typeof CessionarioCommittenteType>
 
 export const DatiAnagraficiTerzoIntermediarioType = z.strictObject({
-  IdFiscaleIVA: IdFiscaleType,
-  CodiceFiscale: CodiceFiscaleType,
+  IdFiscaleIVA: IdFiscaleType.optional(),
+  CodiceFiscale: CodiceFiscaleType.optional(),
   Anagrafica: AnagraficaType,
 })
 export type DatiAnagraficiTerzoIntermediarioType = z.infer<typeof DatiAnagraficiTerzoIntermediarioType>
 
-export const TerzoIntermediarioSoggettoEmittenteType = DatiAnagraficiTerzoIntermediarioType
+export const TerzoIntermediarioSoggettoEmittenteType = z.strictObject({ DatiAnagrafici: DatiAnagraficiTerzoIntermediarioType })
 export type TerzoIntermediarioSoggettoEmittenteType = z.infer<typeof TerzoIntermediarioSoggettoEmittenteType>
 
 export const FatturaElettronicaHeaderType = z.strictObject({
   DatiTrasmissione: DatiTrasmissioneType,
   CedentePrestatore: CedentePrestatoreType,
-  RappresentanteFiscale: RappresentanteFiscaleType,
+  RappresentanteFiscale: RappresentanteFiscaleType.optional(),
   CessionarioCommittente: CessionarioCommittenteType,
-  TerzoIntermediarioOSoggettoEmittente: TerzoIntermediarioSoggettoEmittenteType,
-  SoggettoEmittente: SoggettoEmittenteType,
+  TerzoIntermediarioOSoggettoEmittente: TerzoIntermediarioSoggettoEmittenteType.optional(),
+  SoggettoEmittente: SoggettoEmittenteType.optional(),
 })
 export type FatturaElettronicaHeaderType = z.infer<typeof FatturaElettronicaHeaderType>
 
@@ -304,22 +307,26 @@ export const DatiRitenutaType = z.strictObject({
 })
 export type DatiRitenutaType = z.infer<typeof DatiRitenutaType>
 
-export const DatiBolloType = z.strictObject({ BolloVirtuale: BolloVirtualeType, ImportoBollo: Amount2DecimalType })
+export const DatiBolloType = z.strictObject({ BolloVirtuale: BolloVirtualeType, ImportoBollo: Amount2DecimalType.optional() })
 export type DatiBolloType = z.infer<typeof DatiBolloType>
 
 export const DatiCassaPrevidenzialeType = z.strictObject({
   TipoCassa: TipoCassaType,
   AlCassa: RateType,
   ImportoContributoCassa: Amount2DecimalType,
-  ImponibileCassa: Amount2DecimalType,
+  ImponibileCassa: Amount2DecimalType.optional(),
   AliquotaIVA: RateType,
-  Ritenuta: RitenutaType,
-  Natura: NaturaType,
-  RiferimentoAmministrazione: String20Type,
+  Ritenuta: RitenutaType.optional(),
+  Natura: NaturaType.optional(),
+  RiferimentoAmministrazione: String20Type.optional(),
 })
 export type DatiCassaPrevidenzialeType = z.infer<typeof DatiCassaPrevidenzialeType>
 
-export const ScontoMaggiorazioneType = z.strictObject({ Tipo: TipoScontoMaggiorazioneType, Percentuale: RateType, Importo: Amount8DecimalType })
+export const ScontoMaggiorazioneType = z.strictObject({
+  Tipo: TipoScontoMaggiorazioneType,
+  Percentuale: RateType.optional(),
+  Importo: Amount8DecimalType.optional(),
+})
 export type ScontoMaggiorazioneType = z.infer<typeof ScontoMaggiorazioneType>
 
 export const DatiGeneraliDocumentoType = z.strictObject({
@@ -327,55 +334,59 @@ export const DatiGeneraliDocumentoType = z.strictObject({
   Divisa: DivisaType,
   Data: DataFatturaType,
   Numero: String20Type,
-  DatiRitenuta: DatiRitenutaType,
-  DatiBollo: DatiBolloType,
-  DatiCassaPrevidenziale: DatiCassaPrevidenzialeType,
-  ScontoMaggiorazione: ScontoMaggiorazioneType,
-  ImportoTotaleDocumento: Amount2DecimalType,
-  Arrotondamento: Amount2DecimalType,
-  Causale: String200LatinType,
-  Art73: Art73Type,
+  DatiRitenuta: DatiRitenutaType.array().optional().or(DatiRitenutaType.optional()),
+  DatiBollo: DatiBolloType.optional(),
+  DatiCassaPrevidenziale: DatiCassaPrevidenzialeType.array().optional().or(DatiCassaPrevidenzialeType.optional()),
+  ScontoMaggiorazione: ScontoMaggiorazioneType.array().optional().or(ScontoMaggiorazioneType.optional()),
+  ImportoTotaleDocumento: Amount2DecimalType.optional(),
+  Arrotondamento: Amount2DecimalType.optional(),
+  Causale: String200LatinType.array().optional().or(String200LatinType.optional()),
+  Art73: Art73Type.optional(),
 })
-export type DatiGeneraliDocumentoType = z.infer<typeof DatiGeneraliDocumentoType>
+
 
 export const DatiDocumentiCorrelatiType = z.strictObject({
-  RiferimentoNumeroLinea: RiferimentoNumeroLineaType,
+  RiferimentoNumeroLinea: RiferimentoNumeroLineaType.array().optional().or(RiferimentoNumeroLineaType.optional()),
   IdDocumento: String20Type,
   Data: z.string().optional(),
-  NumItem: String20Type,
-  CodiceCommessaConvenzione: String100LatinType,
-  CodiceCUP: String15Type,
-  CodiceCIG: String15Type,
+  NumItem: String20Type.optional(),
+  CodiceCommessaConvenzione: String100LatinType.optional(),
+  CodiceCUP: String15Type.optional(),
+  CodiceCIG: String15Type.optional(),
 })
 export type DatiDocumentiCorrelatiType = z.infer<typeof DatiDocumentiCorrelatiType>
 
-export const DatiSALType = RiferimentoFaseType
+export const DatiSALType = z.strictObject({ RiferimentoFase: RiferimentoFaseType })
 export type DatiSALType = z.infer<typeof DatiSALType>
 
-export const DatiDDTType = z.strictObject({ NumeroDDT: String20Type, DataDDT: z.string(), RiferimentoNumeroLinea: RiferimentoNumeroLineaType })
+export const DatiDDTType = z.strictObject({
+  NumeroDDT: String20Type,
+  DataDDT: z.string(),
+  RiferimentoNumeroLinea: RiferimentoNumeroLineaType.array().optional().or(RiferimentoNumeroLineaType.optional()),
+})
 export type DatiDDTType = z.infer<typeof DatiDDTType>
 
 export const DatiAnagraficiVettoreType = z.strictObject({
   IdFiscaleIVA: IdFiscaleType,
-  CodiceFiscale: CodiceFiscaleType,
+  CodiceFiscale: CodiceFiscaleType.optional(),
   Anagrafica: AnagraficaType,
-  NumeroLicenzaGuida: String20Type,
+  NumeroLicenzaGuida: String20Type.optional(),
 })
 export type DatiAnagraficiVettoreType = z.infer<typeof DatiAnagraficiVettoreType>
 
 export const DatiTrasportoType = z.strictObject({
-  DatiAnagraficiVettore: DatiAnagraficiVettoreType,
-  MezzoTrasporto: String80LatinType,
-  CausaleTrasporto: String100LatinType,
-  NumeroColli: NumeroColliType,
-  Descrizione: String100LatinType,
-  UnitaMisuraPeso: String10Type,
-  PesoLordo: PesoType,
-  PesoNetto: PesoType,
+  DatiAnagraficiVettore: DatiAnagraficiVettoreType.optional(),
+  MezzoTrasporto: String80LatinType.optional(),
+  CausaleTrasporto: String100LatinType.optional(),
+  NumeroColli: NumeroColliType.optional(),
+  Descrizione: String100LatinType.optional(),
+  UnitaMisuraPeso: String10Type.optional(),
+  PesoLordo: PesoType.optional(),
+  PesoNetto: PesoType.optional(),
   DataOraRitiro: z.string().optional(),
   DataInizioTrasporto: z.string().optional(),
-  TipoResa: TipoResaType,
-  IndirizzoResa: IndirizzoType,
+  TipoResa: TipoResaType.optional(),
+  IndirizzoResa: IndirizzoType.optional(),
   DataOraConsegna: z.string().optional(),
 })
 export type DatiTrasportoType = z.infer<typeof DatiTrasportoType>
@@ -385,15 +396,15 @@ export type FatturaPrincipaleType = z.infer<typeof FatturaPrincipaleType>
 
 export const DatiGeneraliType = z.strictObject({
   DatiGeneraliDocumento: DatiGeneraliDocumentoType,
-  DatiOrdineAcquisto: DatiDocumentiCorrelatiType,
-  DatiContratto: DatiDocumentiCorrelatiType,
-  DatiConvenzione: DatiDocumentiCorrelatiType,
-  DatiRicezione: DatiDocumentiCorrelatiType,
-  DatiFattureCollegate: DatiDocumentiCorrelatiType,
-  DatiSAL: DatiSALType,
-  DatiDDT: DatiDDTType,
-  DatiTrasporto: DatiTrasportoType,
-  FatturaPrincipale: FatturaPrincipaleType,
+  DatiOrdineAcquisto: DatiDocumentiCorrelatiType.array().optional().or(DatiDocumentiCorrelatiType.optional()),
+  DatiContratto: DatiDocumentiCorrelatiType.array().optional().or(DatiDocumentiCorrelatiType.optional()),
+  DatiConvenzione: DatiDocumentiCorrelatiType.array().optional().or(DatiDocumentiCorrelatiType.optional()),
+  DatiRicezione: DatiDocumentiCorrelatiType.array().optional().or(DatiDocumentiCorrelatiType.optional()),
+  DatiFattureCollegate: DatiDocumentiCorrelatiType.array().optional().or(DatiDocumentiCorrelatiType.optional()),
+  DatiSAL: DatiSALType.array().optional().or(DatiSALType.optional()),
+  DatiDDT: DatiDDTType.array().optional().or(DatiDDTType.optional()),
+  DatiTrasporto: DatiTrasportoType.optional(),
+  FatturaPrincipale: FatturaPrincipaleType.optional(),
 })
 export type DatiGeneraliType = z.infer<typeof DatiGeneraliType>
 
@@ -402,83 +413,89 @@ export type CodiceArticoloType = z.infer<typeof CodiceArticoloType>
 
 export const AltriDatiGestionaliType = z.strictObject({
   TipoDato: String10Type,
-  RiferimentoTesto: String60LatinType,
-  RiferimentoNumero: Amount8DecimalType,
+  RiferimentoTesto: String60LatinType.optional(),
+  RiferimentoNumero: Amount8DecimalType.optional(),
   RiferimentoData: z.string().optional(),
 })
 export type AltriDatiGestionaliType = z.infer<typeof AltriDatiGestionaliType>
 
 export const DettaglioLineeType = z.strictObject({
   NumeroLinea: NumeroLineaType,
-  TipoCessionePrestazione: TipoCessionePrestazioneType,
-  CodiceArticolo: CodiceArticoloType,
+  TipoCessionePrestazione: TipoCessionePrestazioneType.optional(),
+  CodiceArticolo: CodiceArticoloType.array().optional().or(CodiceArticoloType.optional()),
   Descrizione: String1000LatinType,
-  Quantita: QuantitaType,
-  UnitaMisura: String10Type,
+  Quantita: QuantitaType.optional(),
+  UnitaMisura: String10Type.optional(),
   DataInizioPeriodo: z.string().optional(),
   DataFinePeriodo: z.string().optional(),
   PrezzoUnitario: Amount8DecimalType,
-  ScontoMaggiorazione: ScontoMaggiorazioneType,
+  ScontoMaggiorazione: ScontoMaggiorazioneType.array().optional().or(ScontoMaggiorazioneType.optional()),
   PrezzoTotale: Amount8DecimalType,
   AliquotaIVA: RateType,
-  Ritenuta: RitenutaType,
-  Natura: NaturaType,
-  RiferimentoAmministrazione: String20Type,
-  AltriDatiGestionali: AltriDatiGestionaliType,
+  Ritenuta: RitenutaType.optional(),
+  Natura: NaturaType.optional(),
+  RiferimentoAmministrazione: String20Type.optional(),
+  AltriDatiGestionali: AltriDatiGestionaliType.array().optional().or(AltriDatiGestionaliType.optional()),
 })
 export type DettaglioLineeType = z.infer<typeof DettaglioLineeType>
 
 export const DatiRiepilogoType = z.strictObject({
   AliquotaIVA: RateType,
-  Natura: NaturaType,
-  SpeseAccessorie: Amount2DecimalType,
-  Arrotondamento: Amount8DecimalType,
+  Natura: NaturaType.optional(),
+  SpeseAccessorie: Amount2DecimalType.optional(),
+  Arrotondamento: Amount8DecimalType.optional(),
   ImponibileImporto: Amount2DecimalType,
   Imposta: Amount2DecimalType,
-  EsigibilitaIVA: EsigibilitaIVAType,
-  RiferimentoNormativo: String100LatinType,
+  EsigibilitaIVA: EsigibilitaIVAType.optional(),
+  RiferimentoNormativo: String100LatinType.optional(),
 })
 export type DatiRiepilogoType = z.infer<typeof DatiRiepilogoType>
 
-export const DatiBeniServiziType = z.strictObject({ DettaglioLinee: DettaglioLineeType, DatiRiepilogo: DatiRiepilogoType })
+export const DatiBeniServiziType = z.strictObject({
+  DettaglioLinee: DettaglioLineeType.array().or(DettaglioLineeType),
+  DatiRiepilogo: DatiRiepilogoType.array().or(DatiRiepilogoType),
+})
 export type DatiBeniServiziType = z.infer<typeof DatiBeniServiziType>
 
 export const DatiVeicoliType = z.strictObject({ Data: z.string(), TotalePercorso: String15Type })
 export type DatiVeicoliType = z.infer<typeof DatiVeicoliType>
 
 export const DettaglioPagamentoType = z.strictObject({
-  Beneficiario: String200LatinType,
+  Beneficiario: String200LatinType.optional(),
   ModalitaPagamento: ModalitaPagamentoType,
   DataRiferimentoTerminiPagamento: z.string().optional(),
-  GiorniTerminiPagamento: GiorniTerminePagamentoType,
+  GiorniTerminiPagamento: GiorniTerminePagamentoType.optional(),
   DataScadenzaPagamento: z.string().optional(),
   ImportoPagamento: Amount2DecimalType,
-  CodUfficioPostale: String20Type,
-  CognomeQuietanzante: String60LatinType,
-  NomeQuietanzante: String60LatinType,
-  CFQuietanzante: CodiceFiscalePFType,
-  TitoloQuietanzante: TitoloType,
-  IstitutoFinanziario: String80LatinType,
-  IBAN: IBANType,
-  ABI: ABIType,
-  CAB: CABType,
-  BIC: BICType,
-  ScontoPagamentoAnticipato: Amount2DecimalType,
+  CodUfficioPostale: String20Type.optional(),
+  CognomeQuietanzante: String60LatinType.optional(),
+  NomeQuietanzante: String60LatinType.optional(),
+  CFQuietanzante: CodiceFiscalePFType.optional(),
+  TitoloQuietanzante: TitoloType.optional(),
+  IstitutoFinanziario: String80LatinType.optional(),
+  IBAN: IBANType.optional(),
+  ABI: ABIType.optional(),
+  CAB: CABType.optional(),
+  BIC: BICType.optional(),
+  ScontoPagamentoAnticipato: Amount2DecimalType.optional(),
   DataLimitePagamentoAnticipato: z.string().optional(),
-  PenalitaPagamentiRitardati: Amount2DecimalType,
+  PenalitaPagamentiRitardati: Amount2DecimalType.optional(),
   DataDecorrenzaPenale: z.string().optional(),
-  CodicePagamento: String60Type,
+  CodicePagamento: String60Type.optional(),
 })
 export type DettaglioPagamentoType = z.infer<typeof DettaglioPagamentoType>
 
-export const DatiPagamentoType = z.strictObject({ CondizioniPagamento: CondizioniPagamentoType, DettaglioPagamento: DettaglioPagamentoType })
+export const DatiPagamentoType = z.strictObject({
+  CondizioniPagamento: CondizioniPagamentoType,
+  DettaglioPagamento: DettaglioPagamentoType.array().or(DettaglioPagamentoType),
+})
 export type DatiPagamentoType = z.infer<typeof DatiPagamentoType>
 
 export const AllegatiType = z.strictObject({
   NomeAttachment: String60LatinType,
-  AlgoritmoCompressione: String10Type,
-  FormatoAttachment: String10Type,
-  DescrizioneAttachment: String100LatinType,
+  AlgoritmoCompressione: String10Type.optional(),
+  FormatoAttachment: String10Type.optional(),
+  DescrizioneAttachment: String100LatinType.optional(),
   Attachment: z.string(),
 })
 export type AllegatiType = z.infer<typeof AllegatiType>
@@ -486,14 +503,14 @@ export type AllegatiType = z.infer<typeof AllegatiType>
 export const FatturaElettronicaBodyType = z.strictObject({
   DatiGenerali: DatiGeneraliType,
   DatiBeniServizi: DatiBeniServiziType,
-  DatiVeicoli: DatiVeicoliType,
-  DatiPagamento: DatiPagamentoType,
-  Allegati: AllegatiType,
+  DatiVeicoli: DatiVeicoliType.optional(),
+  DatiPagamento: DatiPagamentoType.array().optional().or(DatiPagamentoType.optional()),
+  Allegati: AllegatiType.array().optional().or(AllegatiType.optional()),
 })
 export type FatturaElettronicaBodyType = z.infer<typeof FatturaElettronicaBodyType>
 
 export const FatturaElettronicaType = z.strictObject({
   FatturaElettronicaHeader: FatturaElettronicaHeaderType,
-  FatturaElettronicaBody: FatturaElettronicaBodyType,
+  FatturaElettronicaBody: FatturaElettronicaBodyType.array().or(FatturaElettronicaBodyType),
 })
 export type FatturaElettronicaType = z.infer<typeof FatturaElettronicaType>
