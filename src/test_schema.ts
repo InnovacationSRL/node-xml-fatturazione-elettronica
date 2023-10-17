@@ -143,16 +143,16 @@ export type EmailType = z.infer<typeof EmailType>
 const EmailContattiType = z.string()
 export type EmailContattiType = z.infer<typeof EmailContattiType>
 
-const PesoType = z.coerce.number()
+const PesoType = z.coerce.number().transform(v => v.toFixed(2))
 export type PesoType = z.infer<typeof PesoType>
 
-const Amount8DecimalType = z.coerce.number()
+const Amount8DecimalType = z.coerce.number().transform(v => v.toFixed(8))
 export type Amount8DecimalType = z.infer<typeof Amount8DecimalType>
 
-const Amount2DecimalType = z.coerce.number()
+const Amount2DecimalType = z.coerce.number().transform(v => v.toFixed(2))
 export type Amount2DecimalType = z.infer<typeof Amount2DecimalType>
 
-const RateType = z.coerce.number()
+const RateType = z.coerce.number().transform(v => v.toFixed(2))
 export type RateType = z.infer<typeof RateType>
 
 const RiferimentoFaseType = z.coerce.number()
@@ -176,7 +176,7 @@ export type CABType = z.infer<typeof CABType>
 const GiorniTerminePagamentoType = z.coerce.number()
 export type GiorniTerminePagamentoType = z.infer<typeof GiorniTerminePagamentoType>
 
-const QuantitaType = z.coerce.number()
+const QuantitaType = z.coerce.number().transform(v => v.toFixed(8))
 export type QuantitaType = z.infer<typeof QuantitaType>
 
 const DataFatturaType = z.string()
@@ -343,7 +343,7 @@ export const DatiGeneraliDocumentoType = z.strictObject({
   Causale: String200LatinType.array().optional().or(String200LatinType.optional()),
   Art73: Art73Type.optional(),
 })
-
+export type DatiGeneraliDocumentoType = z.infer<typeof DatiGeneraliDocumentoType>
 
 export const DatiDocumentiCorrelatiType = z.strictObject({
   RiferimentoNumeroLinea: RiferimentoNumeroLineaType.array().optional().or(RiferimentoNumeroLineaType.optional()),

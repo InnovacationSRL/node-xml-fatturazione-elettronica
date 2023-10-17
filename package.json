@@ -2,6 +2,9 @@
   "name": "fatture-elettroniche",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json"
+  },
   "devDependencies": {
     "@types/cli-color": "^2.0.3",
     "@types/lodash": "^4.14.198",
@@ -20,5 +23,23 @@
     "typescript": "^5.0.0",
     "zod": "^3.22.2"
   },
-  "dependencies": { "ts-pattern": "^5.0.5" }
+  "dependencies": {
+    "@types/axios": "^0.14.0",
+    "axios": "^1.5.1",
+    "libxmljs": "^1.0.10",
+    "ts-pattern": "^5.0.5",
+    "xmljs": "^0.3.2",
+    "xmllint": "^0.1.1",
+    "xsd-validator": "^1.1.0"
+  },
+  "trustedDependencies": [
+    "xsd-validator",
+    "xmljs",
+    "libxmljs"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ]
 }
